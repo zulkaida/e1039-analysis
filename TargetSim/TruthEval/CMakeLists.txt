@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(truth_eval CXX C)
 
-set(CMAKE_INSTALL_PREFIX $ENV{MY_INSTALL})
+#set(CMAKE_INSTALL_PREFIX $ENV{MY_INSTALL})
 
 # ROOT dict generation
 file(GLOB dicts "")

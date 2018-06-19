@@ -6,15 +6,41 @@ int Fun4Pythia8Demo(
     )
 {
 
+  //gSystem->Load("libPHPythia8.so");
+
+  //Fun4AllServer *se = Fun4AllServer::instance();
+  //se->Verbosity(100);
+
+  //PHPythia8 *pythia8 = new PHPythia8();
+  //pythia8->set_config_file("phpythia8.cfg");
+  //pythia8->Verbosity(100);
+  //se->registerSubsystem(pythia8);
+
+  //PHPy8ParticleTrigger* trigger = new PHPy8ParticleTrigger();
+  //trigger->AddParticles("13,-13");
+  //pythia8->register_trigger(trigger);
+
+  //@{
+  /** Code block that run Pythia8 => HepMC => PHG4InEvent */
   gSystem->Load("libPHPythia8.so");
-
+  
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(100);
-
+  
+  //! Run Pythia8, output to PHHepMCGenEventMap
   PHPythia8 *pythia8 = new PHPythia8();
   pythia8->set_config_file("phpythia8.cfg");
-  pythia8->Verbosity(100);
+  //pythia8->set_vertex_distribution_width(0,0,10,0)
   se->registerSubsystem(pythia8);
+  
+  //! Software trigger for more efficient generation
+  PHPy8ParticleTrigger* trigger = new PHPy8ParticleTrigger();
+  trigger->AddParticles("13,-13");
+  pythia8->register_trigger(trigger);
+  
+  //! PHHepMCGenEventMap => PHG4InEvent
+  HepMCNodeReader *hr = new HepMCNodeReader();
+  se->registerSubsystem(hr);
+  //@}
 
   // particle gun
   PHG4ParticleGun *gun = new PHG4ParticleGun("PGUN");

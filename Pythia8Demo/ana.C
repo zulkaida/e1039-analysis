@@ -3,7 +3,7 @@ void ana() {
   TFile *f = TFile::Open("DSTReader.root");
   TTree *T = (TTree*) f->Get("T");
 
-  TH1D *h1_mass = new TH1D("h1_mass","Di-muon inv. mass; m_{#mu^{+}#mu^{-}}; Events/100MeV",100, 0, 10);
+  TH1D *h1_mass = new TH1D("h1_mass","Di-muon inv. mass; m_{#mu^{+}#mu^{-}} [GeV]; Events/100MeV",100, 0, 10);
 
   int n_PHG4Particle;
   TClonesArray *particles;

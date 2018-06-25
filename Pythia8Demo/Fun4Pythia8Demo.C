@@ -5,37 +5,41 @@ int Fun4Pythia8Demo(
     const int nEvents = 1
     )
 {
+  const bool use_pythia8 = true; //enable ptyiha8
+  const bool use_gun = false; // enable particle gun
+
   //@{
   /** Code block that run Pythia8 => HepMC => PHG4InEvent */
-  gSystem->Load("libPHPythia8.so");
-  
-  Fun4AllServer *se = Fun4AllServer::instance();
-  
-  //! Run Pythia8, output to PHHepMCGenEventMap
-  PHPythia8 *pythia8 = new PHPythia8();
-  pythia8->set_config_file("phpythia8.cfg");
-  //pythia8->set_vertex_distribution_width(0,0,10,0)
-  se->registerSubsystem(pythia8);
-  
-  //! Software trigger for more efficient generation
-  PHPy8ParticleTrigger* trigger = new PHPy8ParticleTrigger();
-  trigger->AddParticles("13,-13");
-  pythia8->register_trigger(trigger);
-  
-  //! PHHepMCGenEventMap => PHG4InEvent
-  HepMCNodeReader *hr = new HepMCNodeReader();
-  se->registerSubsystem(hr);
+  if(use_pythia8) {
+    gSystem->Load("libPHPythia8.so");
+
+    Fun4AllServer *se = Fun4AllServer::instance();
+
+    //! Run Pythia8, output to PHHepMCGenEventMap
+    PHPythia8 *pythia8 = new PHPythia8();
+    pythia8->set_config_file("phpythia8_DY.cfg");
+    //pythia8->set_vertex_distribution_width(0,0,10,0)
+    se->registerSubsystem(pythia8);
+
+    //! Software trigger for more efficient generation
+    PHPy8ParticleTrigger* trigger = new PHPy8ParticleTrigger();
+    trigger->AddParticles("13,-13");
+    pythia8->register_trigger(trigger);
+
+    //! PHHepMCGenEventMap => PHG4InEvent
+    HepMCNodeReader *hr = new HepMCNodeReader();
+    se->registerSubsystem(hr);
+  }
   //@}
 
   // particle gun
-  PHG4ParticleGun *gun = new PHG4ParticleGun("PGUN");
-  gun->set_name("proton");
-  gun->set_vtx(0, 0, 0);
-  gun->set_mom(0, 0, 120);
-  //se->registerSubsystem(gun);
-
-  HepMCNodeReader *hr = new HepMCNodeReader();
-  se->registerSubsystem(hr);
+  if(use_gun) {
+    PHG4ParticleGun *gun = new PHG4ParticleGun("PGUN");
+    gun->set_name("proton");
+    gun->set_vtx(0, 0, 0);
+    gun->set_mom(0, 0, 120);
+    se->registerSubsystem(gun);
+  }
 
   gSystem->Load("libg4testbench");
   PHG4Reco *g4Reco = new PHG4Reco();

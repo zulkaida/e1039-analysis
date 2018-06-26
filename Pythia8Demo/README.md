@@ -16,11 +16,9 @@ git checkout git@github.com:HaiwangYu/seaquest-analysis.git
 ### Run simulation macro
 ```
 cd <path-to/seaquest-analysis/Pythia8Demo>
-root -l -q Fun4Pythia8Demo.C
+root -l -q Fun4Pythia8Demo.C //Pythia only or
+root -l -q Fun4Sim.C //Geant4 simulation
 ```
-This macro does dot contain Geant4 simulation.
-Run [this macro](https://github.com/HaiwangYu/seaquest-offline/blob/master/macros/Fun4Sim.C) if Geant4 simulation needed.
-
 The output DSTRead.root file contanins a tree with TClonesArray branches.
 TClonesArray may constains:
 - [PHG4VtxPoint](https://haiwangyu.github.io/seaquest-offline-doc/d6/d81/classPHG4VtxPoint.html) for interaction vertex

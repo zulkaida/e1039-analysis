@@ -10,14 +10,22 @@ int Fun4HodoAccGap(const int nEvents = 1)
   const double target_z = (7.9-target_l)/2.; //cm
 
   const bool gen_gun = false;
-  const bool gen_pythia8 = true;
-  const bool gen_test = false;
+  const bool gen_pythia8 = false;
+  const bool gen_test = true;
 
   gSystem->Load("libfun4all");
   gSystem->Load("libg4detectors");
   gSystem->Load("libg4testbench");
   gSystem->Load("libg4eval");
   gSystem->Load("libtruth_eval.so");
+
+  JobOptsSvc *jobopt_svc = JobOptsSvc::instance();
+  jobopt_svc->init("default.opts");
+
+  GeomSvc *geom_svc = GeomSvc::instance();
+  //geom_svc->setDetectorY0("H1T", 45.);
+  //geom_svc->setDetectorY0("H1B", -45.);
+  //geom_svc->initWireLUT();
 
   ///////////////////////////////////////////
   // Make the Server
@@ -47,11 +55,13 @@ int Fun4HodoAccGap(const int nEvents = 1)
     pythia8->set_vertex_distribution_mean(0, 0, -130, 0);
     se->registerSubsystem(pythia8);
 
-    PHPy8ParticleTrigger* trigger = new PHPy8ParticleTrigger();
-    trigger->AddParticles("13,-13");
-    trigger->SetEtaHighLow(4, 3);
-    trigger->SetPzHighLow(100, 10);
-    pythia8->register_trigger(trigger);
+    pythia8->set_trigger_AND();
+
+    PHPy8ParticleTrigger* trigger_mup = new PHPy8ParticleTrigger();
+    trigger_mup->AddParticles("13");
+    trigger_mup->SetEtaHighLow(4, 3);
+    trigger_mup->SetPzHighLow(100, 10);
+    pythia8->register_trigger(trigger_mup);
 
     HepMCNodeReader *hr = new HepMCNodeReader();
     se->registerSubsystem(hr);
@@ -63,7 +73,7 @@ int Fun4HodoAccGap(const int nEvents = 1)
     //gun_mup->set_vtx(30, 0, 500);
     //gun_mup->set_mom(0., 0., 20.);
     gun_mup->set_vtx(0., 0., -130);
-    gun_mup->set_mom(3., 0., 20.);
+    gun_mup->set_mom(3., 0.2, 20.);
     se->registerSubsystem(gun_mup);
 
     PHG4ParticleGun *gun_mum = new PHG4ParticleGun("GUN_mum");
@@ -71,8 +81,8 @@ int Fun4HodoAccGap(const int nEvents = 1)
     //gun_mum->set_vtx(-30, 0, 500);
     //gun_mum->set_mom(0., 0., 20.);
     gun_mum->set_vtx(0., 0., -130);
-    gun_mum->set_mom(-3., 0., 20.);
-    //se->registerSubsystem(gun_mum);
+    gun_mum->set_mom(-3., -0.2, 20.);
+    se->registerSubsystem(gun_mum);
   }
 
   // Fun4All G4 module
@@ -93,7 +103,6 @@ int Fun4HodoAccGap(const int nEvents = 1)
   g4Reco->SetWorldMaterial("G4_Galactic");
   // Geant4 Physics list to use
   g4Reco->SetPhysicsList("FTFP_BERT");
-
 
   PHG4E1039InsensSubsystem* insens = new PHG4E1039InsensSubsystem("Insens");
   g4Reco->registerSubsystem(insens);

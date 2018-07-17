@@ -23,9 +23,9 @@ int Fun4HodoAccGap(const int nEvents = 1)
   jobopt_svc->init("default.opts");
 
   GeomSvc *geom_svc = GeomSvc::instance();
-  //geom_svc->setDetectorY0("H1T", 45.);
-  //geom_svc->setDetectorY0("H1B", -45.);
-  //geom_svc->initWireLUT();
+  geom_svc->setDetectorY0("H1T", 45.);
+  geom_svc->setDetectorY0("H1B", -45.);
+  geom_svc->initWireLUT();
 
   ///////////////////////////////////////////
   // Make the Server

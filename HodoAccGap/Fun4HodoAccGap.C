@@ -10,8 +10,8 @@ int Fun4HodoAccGap(const int nEvents = 1, const double hodo_gap = 0.)
   const double target_z = (7.9-target_l)/2.; //cm
 
   const bool gen_gun = false;
-  const bool gen_pythia8 = false;
-  const bool gen_test = true;
+  const bool gen_pythia8 = true;
+  const bool gen_test = false;
 
   gSystem->Load("libfun4all");
   gSystem->Load("libg4detectors");
@@ -58,12 +58,23 @@ int Fun4HodoAccGap(const int nEvents = 1, const double hodo_gap = 0.)
     pythia8->set_trigger_AND();
 
     PHPy8ParticleTrigger* trigger_mup = new PHPy8ParticleTrigger();
-    trigger_mup->AddParticles("13");
-    trigger_mup->SetEtaHighLow(4, 3);
-    trigger_mup->SetPzHighLow(100, 10);
+    trigger_mup->AddParticles("-13");
+    trigger_mup->SetPxHighLow(7, 0.5);
+    trigger_mup->SetPyHighLow(6, -6);
+    trigger_mup->SetPzHighLow(100, 12);
     pythia8->register_trigger(trigger_mup);
 
+    PHPy8ParticleTrigger* trigger_mum = new PHPy8ParticleTrigger();
+    trigger_mum->AddParticles("13");
+    trigger_mum->SetPxHighLow(-0.5, -7);
+    trigger_mum->SetPyHighLow(6, -6);
+    trigger_mum->SetPzHighLow(100, 12);
+    pythia8->register_trigger(trigger_mum);
+
     HepMCNodeReader *hr = new HepMCNodeReader();
+    hr->set_particle_filter_on(true);
+    hr->insert_particle_filter_pid(13);
+    hr->insert_particle_filter_pid(-13);
     se->registerSubsystem(hr);
   }
 

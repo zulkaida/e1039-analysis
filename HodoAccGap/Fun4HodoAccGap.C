@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int Fun4HodoAccGap(const int nEvents = 1)
+int Fun4HodoAccGap(const int nEvents = 1, const double hodo_gap = 0.)
 {
   const int use_g4steps = 1;
   const double target_l = 7.9; //cm
@@ -23,8 +23,8 @@ int Fun4HodoAccGap(const int nEvents = 1)
   jobopt_svc->init("default.opts");
 
   GeomSvc *geom_svc = GeomSvc::instance();
-  geom_svc->setDetectorY0("H1T", 45.);
-  geom_svc->setDetectorY0("H1B", -45.);
+  geom_svc->setDetectorY0("H1T", 35.+hodo_gap/2.); //orig. ~  35 cm
+  geom_svc->setDetectorY0("H1B", -35.-hodo_gap/2.);//orig. ~ -35 cm
   geom_svc->initWireLUT();
 
   ///////////////////////////////////////////

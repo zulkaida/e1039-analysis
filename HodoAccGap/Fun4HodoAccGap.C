@@ -89,7 +89,7 @@ int Fun4HodoAccGap(
     PHG4ParticleGun *gun_mup = new PHG4ParticleGun("GUN_mup");
     gun_mup->set_name("mu+");
     //gun_mup->set_vtx(30, 0, 500);
-    //gun_mup->set_mom(0., 0., 20.);
+    //gun_mup->set_mom(0, 0, 30.);
     gun_mup->set_vtx(0., 0., target_coil_pos_z);
     gun_mup->set_mom(3., 0.2, 40.);
     se->registerSubsystem(gun_mup);
@@ -97,7 +97,7 @@ int Fun4HodoAccGap(
     PHG4ParticleGun *gun_mum = new PHG4ParticleGun("GUN_mum");
     gun_mum->set_name("mu-");
     //gun_mum->set_vtx(-30, 0, 500);
-    //gun_mum->set_mom(0., 0., 20.);
+    //gun_mum->set_mom(0., 0., 30.);
     gun_mum->set_vtx(0., 0., target_coil_pos_z);
     gun_mum->set_mom(-3., -0.2, 40.);
     se->registerSubsystem(gun_mum);
@@ -157,8 +157,8 @@ int Fun4HodoAccGap(
   gROOT->LoadMacro("G4_Target.C");
   SetupTarget(g4Reco, do_collimator, do_target, target_coil_pos_z, target_l, target_z, use_g4steps);
 
-  gROOT->LoadMacro("G4_DriftChamber.C");
-  SetupDriftChamber(g4Reco);
+  gROOT->LoadMacro("G4_SensitiveDetectors.C");
+  SetupSensitiveDetectors(g4Reco);
 
   PHG4TruthSubsystem *truth = new PHG4TruthSubsystem();
   g4Reco->registerSubsystem(truth);
@@ -169,18 +169,18 @@ int Fun4HodoAccGap(
   //digitizer->Verbosity(100);
   se->registerSubsystem(digitizer);
 
-  gSystem->Load("libmodule_example.so");
-  TrkEval *trk_eval = new TrkEval();
-  trk_eval->Verbosity(0);
-  trk_eval->set_hit_container_choice("Vector");
-  trk_eval->set_out_name("trk_eval.root");
-  se->registerSubsystem(trk_eval);
-
   gSystem->Load("libktracker.so");
   KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();
   ktracker->set_geom_file_name("geom.root");
   ktracker->Verbosity(100);
   se->registerSubsystem(ktracker);
+
+  gSystem->Load("libmodule_example.so");
+  TrkEval *trk_eval = new TrkEval();
+  trk_eval->Verbosity(100);
+  trk_eval->set_hit_container_choice("Vector");
+  trk_eval->set_out_name("trk_eval.root");
+  se->registerSubsystem(trk_eval);
 
   //TruthEval* eval = new TruthEval("TruthEval","eval.root");
   //eval->target_l = target_l;

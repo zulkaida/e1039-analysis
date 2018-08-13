@@ -1,22 +1,171 @@
 using namespace std;
 
-#define NFILE 2
-void ana() {
-  char* inputs [] = {"ktracker_eval.root", "ktracker_eval_mass_1GeV.root"};
-  float mean[] = { 0, 0};
-  float mean_error[] = { 0, 0};
-  float gap_size[] = {0, 1};
-  float gap_size_error[] = {0, 0};
+double ratio_error(
+    const double a,
+    const double b,
+    const double ea,
+    const double eb
+    ) {
+  double r = a/b;
+  double er = r*sqrt(
+      (ea/a)*(ea/a) + (eb/b)*(eb/b)
+      );
+  return er;
+}
 
-  for (int i=0; i<NFILE; ++i) {
-    TFile *f = TFile::Open(inputs[i]);
+double binom_error(
+    const double a,
+    const double b
+    ){
+  double r=a/b;
+  return sqrt(r*(1-r)/b);
+}
+
+TH1D * getEffHist(
+    const char* hname,
+    const TH1D* h1,
+    const TH1D* h2
+    ) {
+  TH1D *h = h1->Clone(hname);
+  int nbin = h->GetNbinsX();
+  for(int ibin=1; ibin<=nbin; ++ibin) {
+    double a = h1->GetBinContent(ibin);
+    double b = h2->GetBinContent(ibin);
+    double r = a/b;
+    double e = binom_error(a, b);
+    h->SetBinContent(ibin, r);
+    h->SetBinError(ibin, e);
+  }
+
+  return h;
+}
+
+void drawRelAcc() {
+
+  int nfiles = 5
+    char* inputs [] = {
+      "output/eval_gap_0.root",
+      "output/eval_gap_1.root",
+      "output/eval_gap_2.root",
+      "output/eval_gap_5.root",
+      "output/eval_gap_10.root"
+    };
+
+  float mean[] = { 0, 0, 0, 0, 0};
+  float mean_error[] = { 0, 0, 0, 0, 0};
+  float gap_size[] = {0, 1, 2, 5, 10};
+  float gap_size_error[] = {0, 0, 0, 0, 0};
+
+  float mean0 = 1;
+  float mean_error0 = 0;
+  for (int i=0; i<nfiles; ++i) {
+    TFile *f = TFile::Open(inputs[i],"read");
     TH1D *h = new TH1D("h","h",3,0,3);
-    save->Project("h","recEvent.getNTracks()");
+    T->Project("h","Sum$(detectorID>=31&&detectorID<=46)>=12");
+    //T->Project("h","recEvent.getNTracks()>=2");
+    //T->Project("h","recEvent.getNTracks()");
     mean[i] = h->GetMean();
     mean_error[i] = h->GetMeanError();
+    if(i==0) {
+      mean0 = mean[i];
+      mean_error0 = mean_error[i];
+    }
+    mean[i] = mean[i]/mean0;
+    mean_error[i] = mean_error[i]/mean0;
   }
-  //TGraph* gr = new TGraph(NFILE, gap_size, mean);
-  TGraphErrors* gr = new TGraphErrors(NFILE, gap_size, mean, gap_size_error, mean_error);
-  gr->Draw("A*");
-  gr->GetXaxis()->SetRangeUser(-1,2);
+
+  TCanvas *c0 = new TCanvas("c0","c0");
+  c0->SetGrid();
+
+  TGraphErrors* gr = new TGraphErrors(nfiles, gap_size, mean, gap_size_error, mean_error);
+  gr->SetTitle(";H1 gap size (cm); Drell-Yan Acc.");
+  gr->SetMarkerStyle(20);
+  gr->Draw("ap");
+  gr->GetXaxis()->SetRangeUser(-5,11);
+}
+
+void drawAccPhi() {
+
+  int nfiles = 2;
+  char* inputs [] = {
+    "eval_gap_0.root",
+    //"eval_gap_1.root",
+    //"eval_gap_2.root",
+    //"eval_gap_5.root",
+    "eval_gap_10.root"
+  };
+
+  TCanvas *c0 = new TCanvas("c0","c0"); c0->SetGrid();
+  TCanvas *c1 = new TCanvas("c1","c1"); c1->SetGrid();
+  TCanvas *c2 = new TCanvas("c2","c2"); c2->SetGrid();
+
+  for (int i=0; i<nfiles; ++i) {
+    TFile *f = TFile::Open(inputs[i],"read");
+    TH1D *hnum = new TH1D("hnum","hnum",16, -3.14, 3.14);
+    TH1D *hden = new TH1D("hden","hden",16, -3.14, 3.14);
+
+    //T->Project("hnum","dimu_gphi","dimu_nrec>=2");
+    T->Project("hnum","dimu_gphi","Sum$(gnhodo>=6)>=2");
+    T->Project("hden","dimu_gphi");
+
+    TH1D* hrat = getEffHist("hrat", hnum, hden);
+    //TH1D* hrat = hden->Clone("hrat");;
+    //TH1D* hrat = hnum->Clone("hrat");;
+
+    hnum->SetMarkerStyle(20);
+    hden->SetMarkerStyle(20);
+    hrat->SetMarkerStyle(20);
+
+    if(i==0) {
+
+      c0->cd();
+      hnum->SetTitle("nDimu-trig. vs. #phi; #phi [rad]; nDimu-trig.");
+      hnum->SetMarkerColor(kBlack);
+      hnum->SetLineColor(kBlack);
+      hnum->SetMinimum(0);
+      hnum->Draw("e");
+
+      c1->cd();
+      hden->SetTitle("nDimu-gen. vs. #phi; #phi [rad]; nDimu-gen.");
+      hden->SetMarkerColor(kBlack);
+      hden->SetLineColor(kBlack);
+      hden->SetMinimum(0);
+      hden->Draw("e");
+
+      c2->cd();
+      hrat->SetTitle("Acc. vs. #phi; #phi [rad]; Acc.");
+      hrat->SetMarkerColor(kBlack);
+      hrat->SetLineColor(kBlack);
+      hrat->SetMinimum(0);
+      hrat->SetMaximum(0.1);
+      hrat->Draw("e");
+      TF1 *cos = new TF1("cos","[0]*cos(2*x)+[1]");
+      hrat->Fit("cos");
+      //hrat->SetStats(0);
+    }
+    else {
+      int color = i+1;
+
+      c0->cd();
+      hnum->SetMarkerColor(color);
+      hnum->SetLineColor(color);
+      hnum->Draw("esame");
+
+      c1->cd();
+      hden->SetMarkerColor(color);
+      hden->SetLineColor(color);
+      hden->Draw("esame");
+
+      c2->cd();
+      hrat->SetMarkerColor(color);
+      hrat->SetLineColor(color);
+      hrat->Draw("esame");
+    }
+  }
+}
+
+void ana() {
+  gStyle->SetOptFit();
+
+  drawAccPhi();
 }

@@ -66,19 +66,20 @@ void drawTimeMul() {
 
 void drawEffMul() {
 
-  int n = 5;
+  int n = 6;
   char* inputs [] = {
     "batch1/mu1/trk_eval.root",
     "batch1/mu2/trk_eval.root",
     "batch1/mu5/trk_eval.root",
     "batch1/mu8/trk_eval.root",
-    "batch1/mu10/trk_eval.root"
+    "batch1/mu10/trk_eval.root",
+    "batch1/mu20/trk_eval.root"
   };
 
-  float y[]       = { 0, 0, 0, 0, 0};
-  float y_error[] = { 0, 0, 0, 0, 0};
-  float x[]       = { 1, 2, 5, 8, 10};
-  float x_error[] = { 0, 0, 0, 0, 0};
+  float y[]       = { 0, 0, 0, 0, 0, 0};
+  float y_error[] = { 0, 0, 0, 0, 0, 0};
+  float x[]       = { 1, 2, 5, 8, 10,20};
+  float x_error[] = { 0, 0, 0, 0, 0, 0};
 
   for(int i=0;i<n;++i) {
     TFile *f = TFile::Open(inputs[i],"read");

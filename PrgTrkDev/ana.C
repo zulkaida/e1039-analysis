@@ -68,11 +68,11 @@ void drawEffMul() {
 
   int n = 5;
   char* inputs [] = {
-    "mu1/trk_eval.root",
-    "mu2/trk_eval.root",
-    "mu5/trk_eval.root",
-    "mu8/trk_eval.root",
-    "mu10/trk_eval.root"
+    "batch1/mu1/trk_eval.root",
+    "batch1/mu2/trk_eval.root",
+    "batch1/mu5/trk_eval.root",
+    "batch1/mu8/trk_eval.root",
+    "batch1/mu10/trk_eval.root"
   };
 
   float y[]       = { 0, 0, 0, 0, 0};

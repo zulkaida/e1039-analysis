@@ -39,23 +39,24 @@ TH1D * getEffHist(
 
   return h;
 }
+namespace {
+  int nfiles = 3;
+  char* inputs [] = {
+    "eval_gap_0.root",
+    //"eval_gap_1.root",
+    //"eval_gap_2.root",
+    "eval_gap_5.root",
+    "eval_gap_10.root"
+  };
+
+  float gap_size[] = {0, 5, 10};
+  float gap_size_error[] = {0, 0, 0, 0, 0};
+}
 
 void drawRelAcc() {
 
-  int nfiles = 5
-    char* inputs [] = {
-      "output/eval_gap_0.root",
-      "output/eval_gap_1.root",
-      "output/eval_gap_2.root",
-      "output/eval_gap_5.root",
-      "output/eval_gap_10.root"
-    };
-
   float mean[] = { 0, 0, 0, 0, 0};
   float mean_error[] = { 0, 0, 0, 0, 0};
-  float gap_size[] = {0, 1, 2, 5, 10};
-  float gap_size_error[] = {0, 0, 0, 0, 0};
-
   float mean0 = 1;
   float mean_error0 = 0;
   for (int i=0; i<nfiles; ++i) {
@@ -74,8 +75,8 @@ void drawRelAcc() {
     mean_error[i] = mean_error[i]/mean0;
   }
 
-  TCanvas *c0 = new TCanvas("c0","c0");
-  c0->SetGrid();
+  TCanvas *drawRelAcc_c0 = new TCanvas("drawRelAcc_c0","drawRelAcc_c0");
+  drawRelAcc_c0->SetGrid();
 
   TGraphErrors* gr = new TGraphErrors(nfiles, gap_size, mean, gap_size_error, mean_error);
   gr->SetTitle(";H1 gap size (cm); Drell-Yan Acc.");
@@ -85,19 +86,13 @@ void drawRelAcc() {
 }
 
 void drawAccPhi() {
-
-  int nfiles = 2;
-  char* inputs [] = {
-    "eval_gap_0.root",
-    //"eval_gap_1.root",
-    //"eval_gap_2.root",
-    //"eval_gap_5.root",
-    "eval_gap_10.root"
-  };
-
   TCanvas *c0 = new TCanvas("c0","c0"); c0->SetGrid();
   TCanvas *c1 = new TCanvas("c1","c1"); c1->SetGrid();
   TCanvas *c2 = new TCanvas("c2","c2"); c2->SetGrid();
+  TCanvas *c3 = new TCanvas("c3","c3"); c3->SetGrid();
+
+  float mod[] = { 0, 0, 0, 0, 0};
+  float mod_error[] = { 0, 0, 0, 0, 0};
 
   for (int i=0; i<nfiles; ++i) {
     TFile *f = TFile::Open(inputs[i],"read");
@@ -116,35 +111,40 @@ void drawAccPhi() {
     hden->SetMarkerStyle(20);
     hrat->SetMarkerStyle(20);
 
+    int color = kBlack;
+
     if(i==0) {
 
       c0->cd();
       hnum->SetTitle("nDimu-trig. vs. #phi; #phi [rad]; nDimu-trig.");
-      hnum->SetMarkerColor(kBlack);
-      hnum->SetLineColor(kBlack);
+      hnum->SetMarkerColor(color);
+      hnum->SetLineColor(color);
       hnum->SetMinimum(0);
       hnum->Draw("e");
 
       c1->cd();
       hden->SetTitle("nDimu-gen. vs. #phi; #phi [rad]; nDimu-gen.");
-      hden->SetMarkerColor(kBlack);
-      hden->SetLineColor(kBlack);
+      hden->SetMarkerColor(color);
+      hden->SetLineColor(color);
       hden->SetMinimum(0);
       hden->Draw("e");
 
       c2->cd();
       hrat->SetTitle("Acc. vs. #phi; #phi [rad]; Acc.");
-      hrat->SetMarkerColor(kBlack);
-      hrat->SetLineColor(kBlack);
+      hrat->SetMarkerColor(color);
+      hrat->SetLineColor(color);
       hrat->SetMinimum(0);
       hrat->SetMaximum(0.1);
       hrat->Draw("e");
-      TF1 *cos = new TF1("cos","[0]*cos(2*x)+[1]");
-      hrat->Fit("cos");
       //hrat->SetStats(0);
+      TF1 *cos = new TF1("cos","[0]*cos(2*x)+[1]");
+      cos->SetLineColor(color);
+      hrat->Fit("cos");
+      mod[i] = cos->GetParameter(0);
+      mod_error[i] = cos->GetParError(0);
     }
     else {
-      int color = i+1;
+      color = i+1;
 
       c0->cd();
       hnum->SetMarkerColor(color);
@@ -160,12 +160,28 @@ void drawAccPhi() {
       hrat->SetMarkerColor(color);
       hrat->SetLineColor(color);
       hrat->Draw("esame");
+      TF1 *cos = new TF1("cos","[0]*cos(2*x)+[1]");
+      cos->SetLineColor(color);
+      hrat->Fit("cos");
+      mod[i] = cos->GetParameter(0);
+      mod_error[i] = cos->GetParError(0);
     }
   }
+
+
+  c3->cd();
+  TGraphErrors* gr = new TGraphErrors(nfiles, gap_size, mod, gap_size_error, mod_error);
+  gr->SetTitle(";H1 gap size (cm); Cos(2x) Mod. Str.");
+  gr->SetMarkerStyle(20);
+  gr->Draw("ap");
+  gr->GetXaxis()->SetRangeUser(-5,11);
+  gr->GetYaxis()->SetRangeUser(-0.01, 0);
+
 }
 
 void ana() {
   gStyle->SetOptFit();
 
+  drawRelAcc();
   drawAccPhi();
 }

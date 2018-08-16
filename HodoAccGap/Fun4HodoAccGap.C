@@ -32,7 +32,6 @@ int Fun4HodoAccGap(
   GeomSvc *geom_svc = GeomSvc::instance();
   geom_svc->setDetectorY0("H1T", 35.+hodo_gap/2.); //orig. ~  35 cm
   geom_svc->setDetectorY0("H1B", -35.-hodo_gap/2.);//orig. ~ -35 cm
-  geom_svc->initWireLUT();
 
   ///////////////////////////////////////////
   // Make the Server
@@ -120,7 +119,7 @@ int Fun4HodoAccGap(
     gen->set_eta_range(2, 4);
     gen->set_phi_range(-1.0 * TMath::Pi(), 1.0 * TMath::Pi());
     //gen->set_pt_range(1.0, 3.0);
-    gen->set_p_range(20, 25);
+    //gen->set_p_range(20, 25);
 
     //gen->set_pxpypz_range(2, 3.3, -0.5, 0.5, 20, 21);
     //gen->set_pxpypz_range(1, 4, -1, 1, 15, 60);
@@ -165,19 +164,18 @@ int Fun4HodoAccGap(
 
   se->registerSubsystem(g4Reco);
 
-  DPDigitizer *digitizer = new DPDigitizer();
-  //digitizer->Verbosity(100);
+  DPDigitizer *digitizer = new DPDigitizer("DPDigitizer", 0);
   se->registerSubsystem(digitizer);
 
   gSystem->Load("libktracker.so");
   KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();
   ktracker->set_geom_file_name("geom.root");
-  ktracker->Verbosity(100);
+  ktracker->Verbosity(0);
   se->registerSubsystem(ktracker);
 
   gSystem->Load("libmodule_example.so");
   TrkEval *trk_eval = new TrkEval();
-  trk_eval->Verbosity(100);
+  trk_eval->Verbosity(0);
   trk_eval->set_hit_container_choice("Vector");
   trk_eval->set_out_name("trk_eval.root");
   se->registerSubsystem(trk_eval);
@@ -209,8 +207,8 @@ int Fun4HodoAccGap(
   Fun4AllInputManager *in = new Fun4AllDummyInputManager("JADE");
   se->registerInputManager(in);
 
-  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", "DST.root");
-  se->registerOutputManager(out);
+  //Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", "DST.root");
+  //se->registerOutputManager(out);
 
   // a quick evaluator to inspect on hit/particle/tower level
 

@@ -17,7 +17,7 @@ macros=/e906/app/users/yuhw/seaquest-analysis/HodoAccGap
 if [ $do_sub == 1 ]; then
 work=/pnfs/e906/persistent/users/yuhw/HodoAccGap/$jobname
 else
-work=$macros/scratch
+work=$macros/scratch/$jobname
 fi
 
 mkdir -p $work
@@ -37,20 +37,20 @@ do
 
   cmd="jobsub_submit"
   cmd="$cmd -g --OS=SL6 --use_gftp --resource-provides=usage_model=DEDICATED,OPPORTUNISTIC -e IFDHC_VERSION --expected-lifetime='short'"
+  cmd="$cmd --mail_never"
   cmd="$cmd -L $work/$id/log/log.txt"
   cmd="$cmd -f $work/input.tar.gz"
   cmd="$cmd -d OUTPUT $work/$id/out"
   cmd="$cmd file://`which $work/$id/gridrun.sh`"
-  echo $cmd
 
   if [ $do_sub == 1 ]; then
+    echo $cmd
     $cmd
   else
     mkdir -p $work/$id/input
     rsync -av $work/input.tar.gz $work/$id/input
     cd $work/$id/
     $work/$id/gridrun.sh | tee $work/$id/log/log.txt
-    rsync -av *.root $work/$id/out
     cd -
   fi
 done

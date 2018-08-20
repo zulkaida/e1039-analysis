@@ -136,8 +136,8 @@ int Fun4HodoAccGap(
   //g4Reco->G4Seed(123);
   //g4Reco->set_field(5.);
   g4Reco->set_field_map(
-      "/e906/app/users/liuk/seaquest/seaquest/geometry/magnetic_fields/tab.Fmag "
-      "/e906/app/users/liuk/seaquest/seaquest/geometry/magnetic_fields/tab.Kmag",
+      jobopt_svc->m_fMagFile+" "+
+      jobopt_svc->m_kMagFile,
       4);
   // size of the world - every detector has to fit in here
   g4Reco->SetWorldSizeX(1000);

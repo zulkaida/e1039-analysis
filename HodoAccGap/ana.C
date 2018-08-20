@@ -40,29 +40,30 @@ TH1D * getEffHist(
   return h;
 }
 namespace {
-  int nfiles = 3;
+  int nfiles = 5;
   char* inputs [] = {
     "eval_gap_0.root",
-    //"eval_gap_1.root",
-    //"eval_gap_2.root",
+    "eval_gap_1.root",
+    "eval_gap_2.root",
     "eval_gap_5.root",
     "eval_gap_10.root"
   };
 
-  float gap_size[] = {0, 5, 10};
-  float gap_size_error[] = {0, 0, 0, 0, 0};
+  float gap_size[] = {0, 1, 2, 5, 10};
+  float gap_size_error[] = {0, 0, 0, 0, 0, 0, 0, 0};
 }
 
 void drawRelAcc() {
 
-  float mean[] = { 0, 0, 0, 0, 0};
-  float mean_error[] = { 0, 0, 0, 0, 0};
+  float mean[] = {0, 0, 0, 0, 0, 0, 0, 0};
+  float mean_error[] = {0, 0, 0, 0, 0, 0, 0, 0};
   float mean0 = 1;
   float mean_error0 = 0;
   for (int i=0; i<nfiles; ++i) {
     TFile *f = TFile::Open(inputs[i],"read");
     TH1D *h = new TH1D("h","h",3,0,3);
-    T->Project("h","Sum$(detectorID>=31&&detectorID<=46)>=12");
+    //T->Project("h","Sum$(detectorID>=31&&detectorID<=46)>=12");
+    T->Project("h","Sum$(gnhodo>=8)>=2");
     //T->Project("h","recEvent.getNTracks()>=2");
     //T->Project("h","recEvent.getNTracks()");
     mean[i] = h->GetMean();
@@ -91,8 +92,8 @@ void drawAccPhi() {
   TCanvas *c2 = new TCanvas("c2","c2"); c2->SetGrid();
   TCanvas *c3 = new TCanvas("c3","c3"); c3->SetGrid();
 
-  float mod[] = { 0, 0, 0, 0, 0};
-  float mod_error[] = { 0, 0, 0, 0, 0};
+  float mod[] = {0, 0, 0, 0, 0, 0, 0, 0};
+  float mod_error[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
   for (int i=0; i<nfiles; ++i) {
     TFile *f = TFile::Open(inputs[i],"read");
@@ -100,7 +101,7 @@ void drawAccPhi() {
     TH1D *hden = new TH1D("hden","hden",16, -3.14, 3.14);
 
     //T->Project("hnum","dimu_gphi","dimu_nrec>=2");
-    T->Project("hnum","dimu_gphi","Sum$(gnhodo>=6)>=2");
+    T->Project("hnum","dimu_gphi","Sum$(gnhodo>=8)>=2");
     T->Project("hden","dimu_gphi");
 
     TH1D* hrat = getEffHist("hrat", hnum, hden);
@@ -114,6 +115,8 @@ void drawAccPhi() {
     int color = kBlack;
 
     if(i==0) {
+
+      color = kBlack;
 
       c0->cd();
       hnum->SetTitle("nDimu-trig. vs. #phi; #phi [rad]; nDimu-trig.");

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-nevents=100
-gap=2
+nevents=1000
+gap=1
 
 if [ -z ${CONDOR_DIR_INPUT+x} ];
   then

@@ -196,8 +196,8 @@ int Fun4HodoAccGap(
   ana->set_load_all_particle(false);
   ana->set_load_active_particle(true);
   ana->set_save_vertex(true);
-  ana->AddNode("Coil");
-  ana->AddNode("Target");
+  //ana->AddNode("Coil");
+  //ana->AddNode("Target");
   //ana->AddNode("Collimator");
   ana->AddNode("C1X");
   ana->AddNode("C2X");

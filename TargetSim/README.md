@@ -9,7 +9,7 @@ source /e906/app/users/yuhw/setup.sh
 
 ## check out analysis repository
 ```
-git clone git@github.com:HaiwangYu/seaquest-analysis.git
+git clone https://github.com/HaiwangYu/seaquest-analysis.git
 ```
 
 ## analysis module

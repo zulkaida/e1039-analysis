@@ -1,7 +1,8 @@
 #!/bin/bash
 
-nevents=1000
-gap=1
+nevents=NAN
+gap=NAN
+target_pos=NAN
 
 if [ -z ${CONDOR_DIR_INPUT+x} ];
   then
@@ -33,7 +34,7 @@ ldd /cvmfs/seaquest.opensciencegrid.org/seaquest/users/yuhw/e1039/offline_main/l
 ldd /cvmfs/seaquest.opensciencegrid.org/seaquest/users/yuhw/e1039/offline_main/lib/libg4detectors.so
 echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
 
-time root -b -q Fun4HodoAccGap.C\($nevents,$gap\)
+time root -b -q Fun4HodoAccGap.C\($nevents,$gap,$target_pos\)
 
 mv *.root $CONDOR_DIR_OUTPUT/
 

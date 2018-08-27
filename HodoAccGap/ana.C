@@ -40,16 +40,16 @@ TH1D * getEffHist(
   return h;
 }
 namespace {
-  int nfiles = 5;
+  int nfiles = 4;
   char* inputs [] = {
-    "eval_gap_0.root",
+    //"eval_gap_0.root",
     "eval_gap_1.root",
     "eval_gap_2.root",
     "eval_gap_5.root",
     "eval_gap_10.root"
   };
 
-  float gap_size[] = {0, 1, 2, 5, 10};
+  float gap_size[] = { 1, 2, 5, 10};
   float gap_size_error[] = {0, 0, 0, 0, 0, 0, 0, 0};
 }
 
@@ -62,10 +62,8 @@ void drawRelAcc() {
   for (int i=0; i<nfiles; ++i) {
     TFile *f = TFile::Open(inputs[i],"read");
     TH1D *h = new TH1D("h","h",3,0,3);
-    //T->Project("h","Sum$(detectorID>=31&&detectorID<=46)>=12");
-    T->Project("h","Sum$(gnhodo>=8)>=2");
-    //T->Project("h","recEvent.getNTracks()>=2");
-    //T->Project("h","recEvent.getNTracks()");
+    //T->Project("h","Sum$(gnhodo>=8)>=2");
+    T->Project("h","Sum$(ntruhits>0)>=2");
     mean[i] = h->GetMean();
     mean_error[i] = h->GetMeanError();
     if(i==0) {
@@ -84,6 +82,13 @@ void drawRelAcc() {
   gr->SetMarkerStyle(20);
   gr->Draw("ap");
   gr->GetXaxis()->SetRangeUser(-5,11);
+
+  float data_mean[] = {1, 0.982, 0.954, 0.917};
+  float data_gap[]  = {1, 2,     4,     6};
+  TGraph* data_gr = new TGraph(4, data_gap, data_mean);
+  data_gr->SetMarkerStyle(4);
+  data_gr->SetMarkerColor(kRed);
+  data_gr->Draw("same,p");
 }
 
 void drawAccPhi() {
@@ -186,5 +191,5 @@ void ana() {
   gStyle->SetOptFit();
 
   drawRelAcc();
-  drawAccPhi();
+  //drawAccPhi();
 }

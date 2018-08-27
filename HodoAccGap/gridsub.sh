@@ -6,7 +6,7 @@ do_sub=$2
 njobs=$3
 nevents=$4
 
-gap=1
+gap=$5
 target_pos=-300
 
 if [ $do_sub == 1 ]; then

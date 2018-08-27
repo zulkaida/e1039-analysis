@@ -37,7 +37,7 @@ int Fun4HodoAccGap(
   // Make the Server
   //////////////////////////////////////////
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(100);
+  se->Verbosity(0);
 
   // particle gun
   if(gen_gun) {

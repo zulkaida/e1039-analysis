@@ -1,3 +1,40 @@
+
+
+### clone the analysis repository
 ```
-git clone git@github.com:E1039-Collaboration/seaquest-analysis.git
+git clone https://github.com/E1039-Collaboration/seaquest-analysis.git
 ```
+
+### run the Fun4All macro to perform the simulation
+```
+cd <path-to-hodo-acc-gap>
+root -l Fun4HodoAccGap.C
+```
+Several root files are generated.
+The 'trk_eval.root' contains the information from the evaluator `TrkEval`.
+You may open that file and check the contents.
+
+```
+$root -l trk_eval.root 
+root [0] 
+Attaching file trk_eval.root as _file0...
+root [1] .ls
+TFile**		trk_eval.root	
+ TFile*		trk_eval.root	
+  KEY: TTree	T;1	TrkEval
+```
+
+### analysis
+
+The 'ana.C' is an example analysiing macro.
+You may test it using my data.
+
+```
+ln -s /e906/app/users/yuhw/seaquest-analysis/HodoAccGap/300cm/*.root .
+
+root -l
+root [0] .L ana.C 
+root [1] drawRelAcc()
+root [2] drawAccPhi()
+```
+

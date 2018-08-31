@@ -26,8 +26,8 @@ TFile**		trk_eval.root
 
 ### analysis
 
-The 'ana.C' is an example analysiing macro.
-You may test it using my data.
+The 'ana.C' is an example macro for analysis.
+You may test it using the example data.
 
 ```
 ln -s /e906/app/users/yuhw/seaquest-analysis/HodoAccGap/300cm/*.root .

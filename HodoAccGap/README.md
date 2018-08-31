@@ -11,7 +11,7 @@ cd <path-to-hodo-acc-gap>
 root -l Fun4HodoAccGap.C
 ```
 Several root files are generated.
-The 'trk_eval.root' contains the information from the evaluator `TrkEval`.
+The 'trk_eval.root' contains the information from the evaluator [`TrkEval`](https://e1039-collaboration.github.io/seaquest-offline-doc/de/d2f/classTrkEval.html).
 You may open that file and check the contents.
 
 ```

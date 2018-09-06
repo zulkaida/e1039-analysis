@@ -3,11 +3,11 @@ void int_run() {
 	gROOT->ProcessLine(".L DisplayOn.C");
 	PHG4Reco* g4 = DisplayOn();
 	Fun4AllServer *se = Fun4AllServer::instance();
-  g4->ApplyCommand("/vis/viewer/set/viewpointThetaPhi 90 91");
+  //g4->ApplyCommand("/vis/viewer/set/viewpointThetaPhi 90 91");
 	se->run(1);
 
-  g4->ApplyCommand("/vis/viewer/panTo 2000 0 cm");
-  g4->ApplyCommand("/vis/viewer/zoom 4");
+  //g4->ApplyCommand("/vis/viewer/panTo 2000 0 cm");
+  //g4->ApplyCommand("/vis/viewer/zoom 4");
 
 	//g4->ApplyCommand("/vis/viewer/zoom 0.5");
 	//g4->ApplyCommand("/vis/viewer/set/background white");

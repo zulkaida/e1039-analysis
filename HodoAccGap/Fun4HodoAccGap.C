@@ -9,8 +9,8 @@ int Fun4HodoAccGap(
     const double target_coil_pos_z = -130
     )
 {
-  const bool do_collimator = false;
-  const bool do_target = false;
+  const bool do_collimator = true;
+  const bool do_target = true;
   const double target_l = 7.9; //cm
   const double target_z = (7.9-target_l)/2.; //cm
   const int use_g4steps = 1;

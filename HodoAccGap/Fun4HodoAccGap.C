@@ -146,7 +146,7 @@ int Fun4HodoAccGap(
   // shape of our world - it is a tube
   g4Reco->SetWorldShape("G4BOX");
   // this is what our world is filled with
-  g4Reco->SetWorldMaterial("G4_Galactic");
+  g4Reco->SetWorldMaterial("G4_AIR"); //G4_Galactic, G4_AIR
   // Geant4 Physics list to use
   g4Reco->SetPhysicsList("FTFP_BERT");
 

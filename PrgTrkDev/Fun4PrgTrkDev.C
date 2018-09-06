@@ -30,10 +30,8 @@ int Fun4PrgTrkDev(
   jobopt_svc->init("default.opts");
 
   GeomSvc *geom_svc = GeomSvc::instance();
-  //const double hodo_gap = 0.;
   //geom_svc->setDetectorY0("H1T", 35.+hodo_gap/2.); //orig. ~  35 cm
   //geom_svc->setDetectorY0("H1B", -35.-hodo_gap/2.);//orig. ~ -35 cm
-  //geom_svc->initWireLUT();
 
   ///////////////////////////////////////////
   // Make the Server
@@ -138,8 +136,8 @@ int Fun4PrgTrkDev(
   //g4Reco->G4Seed(123);
   //g4Reco->set_field(5.);
   g4Reco->set_field_map(
-      "/e906/app/users/liuk/seaquest/seaquest/geometry/magnetic_fields/tab.Fmag "
-      "/e906/app/users/liuk/seaquest/seaquest/geometry/magnetic_fields/tab.Kmag",
+      jobopt_svc->m_fMagFile+" "+
+      jobopt_svc->m_kMagFile,
       4);
   // size of the world - every detector has to fit in here
   g4Reco->SetWorldSizeX(1000);
@@ -171,7 +169,7 @@ int Fun4PrgTrkDev(
 
   gSystem->Load("libktracker.so");
   KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();
-  ktracker->set_geom_file_name("geom.root");
+  //ktracker->set_geom_file_name("geom.root");
   ktracker->Verbosity(100);
   se->registerSubsystem(ktracker);
 
@@ -198,8 +196,8 @@ int Fun4PrgTrkDev(
   ana->set_load_all_particle(false);
   ana->set_load_active_particle(true);
   ana->set_save_vertex(true);
-  ana->AddNode("Coil");
-  ana->AddNode("Target");
+  //ana->AddNode("Coil");
+  //ana->AddNode("Target");
   //ana->AddNode("Collimator");
   ana->AddNode("C1X");
   ana->AddNode("C2X");
@@ -218,7 +216,7 @@ int Fun4PrgTrkDev(
   {
     se->run(nEvents);
 
-    PHGeomUtility::ExportGeomtry(se->topNode(),"geom.root");
+    //PHGeomUtility::ExportGeomtry(se->topNode(),"geom.root");
 
     // finish job - close and save output files
     se->End();

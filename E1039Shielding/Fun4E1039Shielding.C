@@ -24,7 +24,6 @@ int Fun4E1039Shielding(
   gSystem->Load("libg4detectors");
   gSystem->Load("libg4testbench");
   gSystem->Load("libg4eval");
-  gSystem->Load("libtruth_eval.so");
 
   JobOptsSvc *jobopt_svc = JobOptsSvc::instance();
   jobopt_svc->init("default.opts");
@@ -158,7 +157,7 @@ int Fun4E1039Shielding(
   shielding->set_string_param("hole_type","circle");
   shielding->set_double_param("place_x",0);
   shielding->set_double_param("place_y",0);
-  shielding->set_double_param("place_z",(100+11.38)*inch/2.);
+  shielding->set_double_param("place_z",(-100)*inch/2.);
   shielding->set_double_param("size_x",60*inch);
   shielding->set_double_param("size_y",60*inch);
   shielding->set_double_param("size_z",11.38*inch);
@@ -178,7 +177,6 @@ int Fun4E1039Shielding(
   shielding->set_string_param("material","G4_CONCRETE");
   g4Reco->registerSubsystem(shielding);
 
-  /*
   PHG4E1039InsensSubsystem* insens = new PHG4E1039InsensSubsystem("Insens");
   g4Reco->registerSubsystem(insens);
 
@@ -206,7 +204,6 @@ int Fun4E1039Shielding(
   trk_eval->set_hit_container_choice("Vector");
   trk_eval->set_out_name("trk_eval.root");
   se->registerSubsystem(trk_eval);
-  */
 
   ///////////////////////////////////////////
   // Output

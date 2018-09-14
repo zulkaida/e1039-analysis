@@ -1,7 +1,8 @@
 #!/bin/bash
 
 nevents=NAN
-gap=NAN
+gap=0
+shield=NAN
 target_pos=NAN
 
 if [ -z ${CONDOR_DIR_INPUT+x} ];
@@ -34,7 +35,7 @@ ldd /cvmfs/seaquest.opensciencegrid.org/seaquest/users/yuhw/e1039/offline_main/l
 ldd /cvmfs/seaquest.opensciencegrid.org/seaquest/users/yuhw/e1039/offline_main/lib/libg4detectors.so
 echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
 
-time root -b -q Fun4E1039Shielding.C\($nevents,$gap,$target_pos\)
+time root -b -q Fun4E1039Shielding.C\($nevents,$gap,$shield,$target_pos\)
 
 mv *.root $CONDOR_DIR_OUTPUT/
 

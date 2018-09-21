@@ -40,13 +40,10 @@ TH1D * getEffHist(
   return h;
 }
 namespace {
-  int nfiles = 5;
+  int nfiles = 2;
   char* inputs [] = {
-    "eval_gap_0.root",
-    "eval_gap_1.root",
-    "eval_gap_2.root",
-    "eval_gap_5.root",
-    "eval_gap_10.root"
+    "without_sheilding.root",
+    "sheilding.root"
   };
 
   float gap_size[] = {0, 1, 2, 5, 10};
@@ -69,7 +66,7 @@ void drawRelAcc() {
     mean_error[i] = h->GetMeanError();
     if(i==0) {
       mean0 = mean[i];
-      mean0 = 0.04041;
+     // mean0 = 0.04041;
       //mean0 = 0.1524;
       mean_error0 = mean_error[i];
     }
@@ -81,7 +78,7 @@ void drawRelAcc() {
   drawRelAcc_c0->SetGrid();
 
   TGraphErrors* gr = new TGraphErrors(nfiles, gap_size, mean, gap_size_error, mean_error);
-  gr->SetTitle(";H1 gap size (cm); Drell-Yan Acc.");
+  gr->SetTitle(";Shielding; Drell-Yan Acc.");
   gr->SetMarkerStyle(20);
   gr->Draw("ap");
   gr->GetXaxis()->SetRangeUser(-5,11);
@@ -182,7 +179,7 @@ void drawAccPhi() {
 
   c3->cd();
   TGraphErrors* gr = new TGraphErrors(nfiles, gap_size, mod, gap_size_error, mod_error);
-  gr->SetTitle(";H1 gap size (cm); Cos(2x) Mod. Str.");
+  gr->SetTitle(";Shielding; Cos(2x) Mod. Str.");
   gr->SetMarkerStyle(20);
   gr->Draw("ap");
   gr->GetXaxis()->SetRangeUser(-5,11);
@@ -190,9 +187,111 @@ void drawAccPhi() {
 
 }
 
+
+void drawSnglAccPz() {
+  TCanvas *c0 = new TCanvas("c0","c0"); c0->SetGrid();
+  TCanvas *c1 = new TCanvas("c1","c1"); c1->SetGrid();
+  TCanvas *c2 = new TCanvas("c2","c2"); c2->SetGrid();
+  TCanvas *c3 = new TCanvas("c3","c3"); c3->SetGrid();
+
+  float mod[] = {0, 0, 0, 0, 0, 0, 0, 0};
+  float mod_error[] = {0, 0, 0, 0, 0, 0, 0, 0};
+  TH1D* hrelrat0;
+
+  for (int i=0; i<nfiles; ++i) {
+    TFile *f = TFile::Open(inputs[i],"read");
+    float xbins[] = {20, 30, 50, 70, 100};
+    TH1D *hnum = new TH1D("hnum","hnum",4, xbins);
+    TH1D *hden = new TH1D("hden","hden",4, xbins);
+
+    //T->Project("hnum","dimu_gphi","dimu_nrec>=2");
+    T->Project("hnum","gpz","gnhodo>=8");
+    T->Project("hden","gpz");
+
+    TH1D* hrat = getEffHist("hrat", hnum, hden);
+    TH1D* hrelrat = (TH1D*) hrat->Clone("hrelrat");
+
+    hnum->SetMarkerStyle(20);
+    hden->SetMarkerStyle(20);
+    hrat->SetMarkerStyle(20);
+    hrelrat->SetMarkerStyle(20);
+
+    int color = kBlack;
+
+    if(i==0) {
+
+      color = kBlack;
+
+      c0->cd();
+      c0->SetLogy();
+      hnum->SetTitle("nDimu-trig. vs. pz; pz [GeV/c]; nDimu-trig.");
+      hnum->SetMarkerColor(color);
+      hnum->SetLineColor(color);
+      hnum->SetMinimum(900);
+      hnum->Draw("e");
+      hnum->SetStats(0);
+
+      c1->cd();
+      c1->SetLogy();
+      hden->SetTitle("nDimu-gen. vs. pz; pz [GeV/c]; nDimu-gen.");
+      hden->SetMarkerColor(color);
+      hden->SetLineColor(color);
+      hden->SetMinimum(900);
+      hden->Draw("e");
+      hden->SetStats(0);
+
+      c2->cd();
+      hrat->SetTitle("Acc. vs. pz; pz [GeV/c]; Acc.");
+      hrat->SetMarkerColor(color);
+      hrat->SetLineColor(color);
+      hrat->SetMinimum(0.);
+      hrat->SetMaximum(1.1);
+      hrat->Draw("e");
+      hrat->SetStats(0);
+
+      hrelrat0 = (TH1D*) hrelrat->Clone("hrelrat0");
+    }
+    else {
+      color = i+1;
+
+      c0->cd();
+      hnum->SetMarkerColor(color);
+      hnum->SetLineColor(color);
+      hnum->Draw("esame");
+
+      c1->cd();
+      hden->SetMarkerColor(color);
+      hden->SetLineColor(color);
+      hden->Draw("esame");
+
+      c2->cd();
+      hrat->SetMarkerColor(color);
+      hrat->SetLineColor(color);
+      hrat->Draw("esame");
+
+      c3->cd();
+      for(int ibin==1;ibin<=hrelrat->GetNbinsX();++ibin ){
+        hrelrat->SetBinContent(ibin,
+            hrelrat->GetBinContent(ibin)/hrelrat0->GetBinContent(ibin));
+        hrelrat->SetBinError(ibin,
+            hrelrat->GetBinError(ibin)/hrelrat0->GetBinContent(ibin));
+      }
+      hrelrat->SetTitle("Rel. Acc. vs. pz; pz [GeV/c]; Rel. Acc.");
+      hrelrat->SetMarkerColor(color);
+      hrelrat->SetLineColor(color);
+      hrelrat->SetStats(0);
+      if(i==1)
+        hrelrat->Draw("e");
+      else
+        hrelrat->Draw("esame");
+    }
+  }
+}
+
 void ana() {
   gStyle->SetOptFit();
 
-  drawRelAcc();
+  //drawRelAcc();
   //drawAccPhi();
+  drawSnglAccPz();
 }

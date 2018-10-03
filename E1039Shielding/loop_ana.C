@@ -126,7 +126,7 @@ void drawAccMass() {
 			hnum->SetTitle("nDimu-trig. vs. M_{#mu#mu}; M_{#mu#mu} [GeV/c^{2}]; nDimu-trig.");
 			hnum->SetMarkerColor(color);
 			hnum->SetLineColor(color);
-			hnum->SetMinimum(900);
+			hnum->SetMinimum(1);
 			hnum->Draw("e");
 			hnum->SetStats(0);
 
@@ -135,7 +135,7 @@ void drawAccMass() {
 			hden->SetTitle("nDimu-gen. vs. M_{#mu#mu}; M_{#mu#mu} [GeV/c^{2}]; nDimu-gen.");
 			hden->SetMarkerColor(color);
 			hden->SetLineColor(color);
-			hden->SetMinimum(900);
+			hden->SetMinimum(1);
 			hden->Draw("e");
 			hden->SetStats(0);
 
@@ -170,7 +170,7 @@ void drawAccMass() {
 
 			c3->cd();
 			for(int ibin=1;ibin<=hrelrat->GetNbinsX();++ibin ){
-				doulbe relrat0_val = hrelrat0->GetBinContent(ibin);
+				double relrat0_val = hrelrat0->GetBinContent(ibin);
 				if(relrat0_val<=0) {
 					hrelrat->SetBinContent(ibin,0);
 					hrelrat->SetBinError(ibin,0);

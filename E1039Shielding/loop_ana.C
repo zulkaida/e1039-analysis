@@ -170,10 +170,16 @@ void drawAccMass() {
 
 			c3->cd();
 			for(int ibin=1;ibin<=hrelrat->GetNbinsX();++ibin ){
+				doulbe relrat0_val = hrelrat0->GetBinContent(ibin);
+				if(relrat0_val<=0) {
+					hrelrat->SetBinContent(ibin,0);
+					hrelrat->SetBinError(ibin,0);
+					continue;
+				}
 				hrelrat->SetBinContent(ibin,
-						hrelrat->GetBinContent(ibin)/hrelrat0->GetBinContent(ibin));
+						hrelrat->GetBinContent(ibin)/relrat0_val);
 				hrelrat->SetBinError(ibin,
-						hrelrat->GetBinError(ibin)/hrelrat0->GetBinContent(ibin));
+						hrelrat->GetBinError(ibin)/relrat0_val);
 			}
 			hrelrat->SetTitle("Rel. Acc. vs. M_{#mu#mu}; M_{#mu#mu} [GeV/c^{2}]; Rel. Acc.");
 			hrelrat->SetMarkerColor(color);

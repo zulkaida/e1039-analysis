@@ -10,8 +10,8 @@ int Fun4E1039Shielding(
     const double target_coil_pos_z = -300
     )
 {
-  const bool do_collimator = false;
-  const bool do_target = false;
+  const bool do_collimator = true;
+  const bool do_target = true;
   const double target_l = 7.9; //cm
   const double target_z = (7.9-target_l)/2.; //cm
   const int use_g4steps = 1;
@@ -133,11 +133,13 @@ int Fun4E1039Shielding(
 
   // Fun4All G4 module
   PHG4Reco *g4Reco = new PHG4Reco();
+	g4Reco->Verbosity(1);
   //g4Reco->G4Seed(123);
   //g4Reco->set_field(5.);
   g4Reco->set_field_map(
       jobopt_svc->m_fMagFile+" "+
-      jobopt_svc->m_kMagFile,
+      jobopt_svc->m_kMagFile+" "+
+			"1.0 1.0 5.0",
       4);
   // size of the world - every detector has to fit in here
   g4Reco->SetWorldSizeX(1000);
@@ -212,7 +214,7 @@ int Fun4E1039Shielding(
   gSystem->Load("libktracker.so");
   KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();
   ktracker->set_geom_file_name("geom.root");
-  ktracker->Verbosity(0);
+  ktracker->Verbosity(10);
   se->registerSubsystem(ktracker);
 
   gSystem->Load("libmodule_example.so");

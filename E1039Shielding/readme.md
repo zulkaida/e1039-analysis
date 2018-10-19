@@ -37,7 +37,7 @@ root [0] .L loop_ana.C
 root [1] drawAccMass()
 ```
 
-### run the Fun4All  shielding macro in Fermilab grid:
+### run the Fun4All  shielding macro in Fermilab grid (the switch info can be found in `gridrun.sh` and `gridsub.sh`):
 
 ```
 ./gridsub.sh opening 1 100 1000 1

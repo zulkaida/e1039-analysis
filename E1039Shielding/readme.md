@@ -31,6 +31,12 @@ root [1] drawRelAcc()
 root [2] drawAccPhi()
 ```
 
+```
+root -l
+root [0] .L loop_ana.C 
+root [1] drawAccMass()
+```
+
 ### run the Fun4All  shielding macro in Fermilab grid:
 
 ```
@@ -54,5 +60,11 @@ root -l
 root [0] .L ana.C 
 root [1] drawRelAcc()
 root [2] drawAccPhi()
+```
+
+```
+root -l
+root [0] .L loop_ana.C 
+root [1] drawAccMass()
 ```
 

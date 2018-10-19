@@ -23,7 +23,7 @@ TFile**		trk_eval.root
 ```
 
 ### analysis
-This root file 'trk_eval.root' needs to be attached in the macro  for analysis. The analysis macro  `ana.C` is for acceptance vs hole size studies and the macro `loop_ana.C` is for acceptance vs dimuon mass study. You may test it using the example data.
+This root file 'trk_eval.root' needs to be attached in the macro  for analysis. The analysis macro  `ana.C` is for acceptance vs hole size studies and the macro `loop_ana.C` is for acceptance vs dimuon mass study. You may test it using the example data from the trk_eval.root.
 ```
 root -l
 root [0] .L ana.C 

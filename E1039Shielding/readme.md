@@ -7,7 +7,7 @@ git clone https://github.com/E1039-Collaboration/seaquest-analysis.git
 ### run the Fun4All  shielding macro into the local gpvm machine:
 ```
 cd <path-to-/seaquest-analysis/E1039Shielding>
-root -l Fun4HodoAccGap.C
+root -l Fun4E1039Shielding.C
 ```
 Several root files are generated.
 The 'trk_eval.root' contains the information from the evaluator [`TrkEval`]. You may open that file and check the contents.

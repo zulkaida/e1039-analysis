@@ -51,7 +51,7 @@ cd /pnfs/e906/persistent/users/<your-user-id>/E1039Shielding
 ```
 ### Collect all the root files in a single root file
 
-```hadd strk_eval.root /pnfs/e906/persistent/users/<your-user-id>/E1039Shielding/shield_target98/*/out/trk_eval.root ```
+```hadd <output-filename>.root /pnfs/e906/persistent/users/<your-user-id>/E1039Shielding/<name-of-your-output-file>/*/out/trk_eval.root ```
 
 ### analysis
 This root file 'trk_eval.root' needs to be attached in the macro  for analysis. The analysis macro  `ana.C` is for acceptance vs hole size studies and the macro `loop_ana.C` is for acceptance vs dimuon mass study. You may test it using the example data.

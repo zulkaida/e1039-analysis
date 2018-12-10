@@ -6,7 +6,7 @@ using namespace std;
 int Fun4PrgTrkDev(
     const int nEvents = 1,
     const int nmu = 1,
-    const double target_coil_pos_z = -130
+    const double target_coil_pos_z = -300
     )
 {
   const bool do_collimator = false;
@@ -24,7 +24,6 @@ int Fun4PrgTrkDev(
   gSystem->Load("libg4detectors");
   gSystem->Load("libg4testbench");
   gSystem->Load("libg4eval");
-  gSystem->Load("libtruth_eval.so");
 
   JobOptsSvc *jobopt_svc = JobOptsSvc::instance();
   jobopt_svc->init("default.opts");
@@ -41,16 +40,11 @@ int Fun4PrgTrkDev(
 
   // particle gun
   if(gen_gun) {
-    PHG4ParticleGun *gun_beam = new PHG4ParticleGun("GUN_beam");
-    gun_beam->set_name("proton");//proton
-    gun_beam->set_vtx(0, 0, -400); //-363.32 cm
-    gun_beam->set_mom(0, 0, 120);
-    TF2 *beam_profile = new TF2("beam_profile",
-        //"(((x**2+y**2)<=0.81)*exp(-(x**2+y**2)/0.18))+(((x**2+y**2)>0.81&&(x**2+y**2)<=25&&abs(y)<1.)*0.9*exp(-4.5)/(sqrt(x**2+y**2)))",
-        "(((x**2+y**2)<=0.81)*exp(-(x**2+y**2)/0.18))+(((x**2+y**2)>0.81&&(x**2+y**2)<=25)*0.9*exp(-4.5)/(sqrt(x**2+y**2)))",
-        -5,5,-5,5);
-    //gun_beam->set_beam_profile(beam_profile);
-    //se->registerSubsystem(gun_beam);
+    PHG4ParticleGun *gun = new PHG4ParticleGun("GUN");
+    gun->set_name("mu+");
+    gun->set_vtx(0, 0, target_coil_pos_z);
+    gun->set_mom(3, 0, 40);
+    se->registerSubsystem(gun);
   }
 
   if(gen_pythia8) {
@@ -105,7 +99,9 @@ int Fun4PrgTrkDev(
   if(gen_particle) {
     // toss low multiplicity dummy events
     PHG4SimpleEventGenerator *gen = new PHG4SimpleEventGenerator();
+
     gen->add_particles("mu+", nmu);  // mu+,e+,proton,pi+,Upsilon
+    //gen->add_particles("mu-", nmu);  // mu+,e+,proton,pi+,Upsilon
 
     gen->set_vertex_distribution_function(PHG4SimpleEventGenerator::Uniform,
         PHG4SimpleEventGenerator::Uniform,
@@ -118,12 +114,8 @@ int Fun4PrgTrkDev(
 
     gen->set_eta_range(2, 4);
     gen->set_phi_range(-1.0 * TMath::Pi(), 1.0 * TMath::Pi());
-    //gen->set_pt_range(1.0, 3.0);
-    //gen->set_p_range(20, 25);
-
-    //gen->set_pxpypz_range(2, 3.3, -0.5, 0.5, 20, 21);
-    //gen->set_pxpypz_range(1, 4, -1, 1, 15, 60);
     gen->set_pxpypz_range(1, 4, -1, 1, 30, 60);
+    //gen->set_pxpypz_range(-4,4, -1,1, 30,60);
 
     //gen->Embed(2);
     gen->Verbosity(0);
@@ -137,7 +129,8 @@ int Fun4PrgTrkDev(
   //g4Reco->set_field(5.);
   g4Reco->set_field_map(
       jobopt_svc->m_fMagFile+" "+
-      jobopt_svc->m_kMagFile,
+      jobopt_svc->m_kMagFile+" "+
+			"1.0 1.0 0.0",
       4);
   // size of the world - every detector has to fit in here
   g4Reco->SetWorldSizeX(1000);
@@ -159,10 +152,10 @@ int Fun4PrgTrkDev(
   gROOT->LoadMacro("G4_SensitiveDetectors.C");
   SetupSensitiveDetectors(g4Reco);
 
+  se->registerSubsystem(g4Reco);
+
   PHG4TruthSubsystem *truth = new PHG4TruthSubsystem();
   g4Reco->registerSubsystem(truth);
-
-  se->registerSubsystem(g4Reco);
 
   DPDigitizer *digitizer = new DPDigitizer("DPDigitizer", 0);
   se->registerSubsystem(digitizer);
@@ -170,7 +163,7 @@ int Fun4PrgTrkDev(
   gSystem->Load("libktracker.so");
   KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();
   //ktracker->set_geom_file_name("geom.root");
-  ktracker->Verbosity(100);
+  ktracker->Verbosity(10);
   se->registerSubsystem(ktracker);
 
   gSystem->Load("libmodule_example.so");
@@ -179,11 +172,6 @@ int Fun4PrgTrkDev(
   trk_eval->set_hit_container_choice("Vector");
   trk_eval->set_out_name("trk_eval.root");
   se->registerSubsystem(trk_eval);
-
-  //TruthEval* eval = new TruthEval("TruthEval","eval.root");
-  //eval->target_l = target_l;
-  //eval->target_z = target_z;
-  //se->registerSubsystem(eval);
 
   ///////////////////////////////////////////
   // Output

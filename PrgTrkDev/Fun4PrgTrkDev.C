@@ -97,30 +97,40 @@ int Fun4PrgTrkDev(
   }
 
   if(gen_particle) {
-    // toss low multiplicity dummy events
-    PHG4SimpleEventGenerator *gen = new PHG4SimpleEventGenerator();
-
+    PHG4SimpleEventGenerator *gen = new PHG4SimpleEventGenerator("MUP");
     gen->add_particles("mu+", nmu);  // mu+,e+,proton,pi+,Upsilon
-    //gen->add_particles("mu-", nmu);  // mu+,e+,proton,pi+,Upsilon
-
     gen->set_vertex_distribution_function(PHG4SimpleEventGenerator::Uniform,
         PHG4SimpleEventGenerator::Uniform,
         PHG4SimpleEventGenerator::Uniform);
     gen->set_vertex_distribution_mean(0.0, 0.0, target_coil_pos_z);
     gen->set_vertex_distribution_width(0.0, 0.0, 0.0);
-
     gen->set_vertex_size_function(PHG4SimpleEventGenerator::Uniform);
     gen->set_vertex_size_parameters(0.0, 0.0);
 
-    gen->set_eta_range(2, 4);
-    gen->set_phi_range(-1.0 * TMath::Pi(), 1.0 * TMath::Pi());
+    //gen->set_phi_range(-1.0 * TMath::Pi(), 1.0 * TMath::Pi());
+    //gen->set_eta_range(2, 4);
     gen->set_pxpypz_range(1, 4, -1, 1, 30, 60);
-    //gen->set_pxpypz_range(-4,4, -1,1, 30,60);
-
-    //gen->Embed(2);
+    //gen->set_pxpypz_range(3.67913,3.67913, 0.903882,0.903882, 59.5077,59.5077);
     gen->Verbosity(0);
-
     se->registerSubsystem(gen);
+  }
+
+  if(gen_particle) {
+    PHG4SimpleEventGenerator *gen2 = new PHG4SimpleEventGenerator("MUM");
+    gen2->add_particles("mu-", nmu);  // mu+,e+,proton,pi+,Upsilon
+    gen2->set_vertex_distribution_function(PHG4SimpleEventGenerator::Uniform,
+        PHG4SimpleEventGenerator::Uniform,
+        PHG4SimpleEventGenerator::Uniform);
+    gen2->set_vertex_distribution_mean(0.0, 0.0, target_coil_pos_z);
+    gen2->set_vertex_distribution_width(0.0, 0.0, 0.0);
+    gen2->set_vertex_size_function(PHG4SimpleEventGenerator::Uniform);
+    gen2->set_vertex_size_parameters(0.0, 0.0);
+
+    //gen2->set_phi_range(-1.0 * TMath::Pi(), 1.0 * TMath::Pi());
+    //gen2->set_eta_range(2, 4);
+    gen2->set_pxpypz_range(-4, -1, -1, 1, 30, 60);
+    gen2->Verbosity(0);
+    //se->registerSubsystem(gen2);
   }
 
   // Fun4All G4 module

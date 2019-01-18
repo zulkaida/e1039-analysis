@@ -109,8 +109,8 @@ int Fun4PrgTrkDev(
 
     //gen->set_phi_range(-1.0 * TMath::Pi(), 1.0 * TMath::Pi());
     //gen->set_eta_range(2, 4);
-    gen->set_pxpypz_range(1, 4, -1, 1, 30, 60);
-    //gen->set_pxpypz_range(3.67913,3.67913, 0.903882,0.903882, 59.5077,59.5077);
+    //gen->set_pxpypz_range(1, 4, -1, 1, 30, 60);
+    gen->set_pxpypz_range(2,2, 0.2,0.2, 40,40);
     gen->Verbosity(0);
     se->registerSubsystem(gen);
   }
@@ -174,6 +174,7 @@ int Fun4PrgTrkDev(
   KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();
   //ktracker->set_geom_file_name("geom.root");
   ktracker->Verbosity(10);
+  //ktracker->set_enable_DS(true);
   se->registerSubsystem(ktracker);
 
   gSystem->Load("libmodule_example.so");

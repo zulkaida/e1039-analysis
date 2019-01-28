@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int Fun4PrgTrkDev(
+int Fun4PatternDB(
     const int nEvents = 1,
     const int nmu = 1,
     const double target_coil_pos_z = -300
@@ -172,7 +172,7 @@ int Fun4PrgTrkDev(
 
   gSystem->Load("libktracker.so");
   KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();
-  ktracker->Verbosity(10);
+  //ktracker->Verbosity(10);
   //ktracker->set_enable_DS(true);
   se->registerSubsystem(ktracker);
 

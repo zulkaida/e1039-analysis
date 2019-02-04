@@ -17,7 +17,6 @@ int Fun4PatternDB(
 
   const bool gen_gun = false;
   const bool gen_pythia8 = false;
-  const bool gen_test = false;
   const bool gen_particle = true;
 
   gSystem->Load("libfun4all");
@@ -78,24 +77,6 @@ int Fun4PatternDB(
     se->registerSubsystem(hr);
   }
 
-  if(gen_test) {
-    PHG4ParticleGun *gun_mup = new PHG4ParticleGun("GUN_mup");
-    gun_mup->set_name("mu+");
-    //gun_mup->set_vtx(30, 0, 500);
-    //gun_mup->set_mom(0, 0, 30.);
-    gun_mup->set_vtx(0., 0., target_coil_pos_z);
-    gun_mup->set_mom(3., 0.2, 40.);
-    se->registerSubsystem(gun_mup);
-
-    PHG4ParticleGun *gun_mum = new PHG4ParticleGun("GUN_mum");
-    gun_mum->set_name("mu-");
-    //gun_mum->set_vtx(-30, 0, 500);
-    //gun_mum->set_mom(0., 0., 30.);
-    gun_mum->set_vtx(0., 0., target_coil_pos_z);
-    gun_mum->set_mom(-3., -0.2, 40.);
-    se->registerSubsystem(gun_mum);
-  }
-
   if(gen_particle) {
     PHG4SimpleEventGenerator *gen = new PHG4SimpleEventGenerator("MUP");
     gen->add_particles("mu+", nmu);  // mu+,e+,proton,pi+,Upsilon
@@ -107,10 +88,7 @@ int Fun4PatternDB(
     gen->set_vertex_size_function(PHG4SimpleEventGenerator::Uniform);
     gen->set_vertex_size_parameters(0.0, 0.0);
 
-    //gen->set_phi_range(-1.0 * TMath::Pi(), 1.0 * TMath::Pi());
-    //gen->set_eta_range(2, 4);
     gen->set_pxpypz_range(1, 4, -1, 1, 30, 60);
-    //gen->set_pxpypz_range(2,2, 0.2,0.2, 40,40);
     gen->Verbosity(0);
     se->registerSubsystem(gen);
   }
@@ -126,8 +104,6 @@ int Fun4PatternDB(
     gen2->set_vertex_size_function(PHG4SimpleEventGenerator::Uniform);
     gen2->set_vertex_size_parameters(0.0, 0.0);
 
-    //gen2->set_phi_range(-1.0 * TMath::Pi(), 1.0 * TMath::Pi());
-    //gen2->set_eta_range(2, 4);
     gen2->set_pxpypz_range(-4, -1, -1, 1, 30, 60);
     gen2->Verbosity(0);
     //se->registerSubsystem(gen2);

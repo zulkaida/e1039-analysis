@@ -5,10 +5,12 @@ using namespace std;
 
 int Fun4PrgTrkDev(
     const int nEvents = 1,
-    const int nmu = 1,
-    const double target_coil_pos_z = -300
+    const double x0_shift = 2.0 //cm 
     )
 {
+  const int nmu = 1;
+  const double target_coil_pos_z = -300;
+
   const bool do_collimator = false;
   const bool do_target = false;
   const double target_l = 7.9; //cm
@@ -29,8 +31,9 @@ int Fun4PrgTrkDev(
   jobopt_svc->init("default.opts");
 
   GeomSvc *geom_svc = GeomSvc::instance();
-  //geom_svc->setDetectorY0("H1T", 35.+hodo_gap/2.); //orig. ~  35 cm
-  //geom_svc->setDetectorY0("H1B", -35.-hodo_gap/2.);//orig. ~ -35 cm
+  std::cout << "D2X::X0: " << geom_svc->getDetectorX0("D2X") << std::endl;
+  geom_svc->setDetectorX0("D2X", geom_svc->getDetectorX0("D2X")+x0_shift);
+  std::cout << "D2X::X0: " << geom_svc->getDetectorX0("D2X") << std::endl;
 
   ///////////////////////////////////////////
   // Make the Server
@@ -140,7 +143,7 @@ int Fun4PrgTrkDev(
   g4Reco->set_field_map(
       jobopt_svc->m_fMagFile+" "+
       jobopt_svc->m_kMagFile+" "+
-			"1.0 1.0 0.0",
+      "1.0 1.0 0.0",
       4);
   // size of the world - every detector has to fit in here
   g4Reco->SetWorldSizeX(1000);
@@ -168,12 +171,13 @@ int Fun4PrgTrkDev(
   g4Reco->registerSubsystem(truth);
 
   DPDigitizer *digitizer = new DPDigitizer("DPDigitizer", 0);
+  //digitizer->Verbosity(10);
   se->registerSubsystem(digitizer);
 
   gSystem->Load("libktracker.so");
   KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();
   ktracker->Verbosity(10);
-  //ktracker->set_enable_DS(true);
+  ktracker->set_DS_level(2);
   se->registerSubsystem(ktracker);
 
   gSystem->Load("libmodule_example.so");

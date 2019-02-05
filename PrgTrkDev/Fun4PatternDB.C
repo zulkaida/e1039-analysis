@@ -17,7 +17,8 @@ int Fun4PatternDB(
 
   const bool gen_gun = false;
   const bool gen_pythia8 = false;
-  const bool gen_particle = true;
+  const bool gen_particle = false;
+  const bool gen_scan = true;
 
   gSystem->Load("libfun4all");
   gSystem->Load("libg4detectors");
@@ -28,8 +29,6 @@ int Fun4PatternDB(
   jobopt_svc->init("default.opts");
 
   GeomSvc *geom_svc = GeomSvc::instance();
-  //geom_svc->setDetectorY0("H1T", 35.+hodo_gap/2.); //orig. ~  35 cm
-  //geom_svc->setDetectorY0("H1B", -35.-hodo_gap/2.);//orig. ~ -35 cm
 
   ///////////////////////////////////////////
   // Make the Server
@@ -77,25 +76,30 @@ int Fun4PatternDB(
     se->registerSubsystem(hr);
   }
 
-  if(gen_particle) {
-    PHG4SimpleEventGenerator *gen = new PHG4SimpleEventGenerator("MUP");
+  if(gen_scan) {
+    PHG4PSScanGenerator *gen = new PHG4PSScanGenerator("MUP");
     gen->add_particles("mu+", nmu);  // mu+,e+,proton,pi+,Upsilon
-    gen->set_vertex_distribution_function(PHG4SimpleEventGenerator::Uniform,
-        PHG4SimpleEventGenerator::Uniform,
-        PHG4SimpleEventGenerator::Uniform);
+    gen->set_vertex_distribution_function(PHG4PSScanGenerator::Uniform,
+        PHG4PSScanGenerator::Uniform,
+        PHG4PSScanGenerator::Uniform);
     gen->set_vertex_distribution_mean(0.0, 0.0, target_coil_pos_z);
     gen->set_vertex_distribution_width(0.0, 0.0, 0.0);
-    gen->set_vertex_size_function(PHG4SimpleEventGenerator::Uniform);
+    gen->set_vertex_size_function(PHG4PSScanGenerator::Uniform);
     gen->set_vertex_size_parameters(0.0, 0.0);
 
-    gen->set_pxpypz_range(1, 4, -1, 1, 30, 60);
+    //gen->set_pxpypz_range(1, 4, -1, 1, 30, 60);
+    gen->set_pxpypz_range(1, 4, -1, 1, 50, 51);
+		gen->set_px_step(0.6);
+		gen->set_py_step(1);
+		gen->set_pz_step(1);
+
     gen->Verbosity(0);
     se->registerSubsystem(gen);
   }
 
   if(gen_particle) {
-    PHG4SimpleEventGenerator *gen2 = new PHG4SimpleEventGenerator("MUM");
-    gen2->add_particles("mu-", nmu);  // mu+,e+,proton,pi+,Upsilon
+    PHG4SimpleEventGenerator *gen2 = new PHG4SimpleEventGenerator("MUP");
+    gen2->add_particles("mu+", nmu);  // mu+,e+,proton,pi+,Upsilon
     gen2->set_vertex_distribution_function(PHG4SimpleEventGenerator::Uniform,
         PHG4SimpleEventGenerator::Uniform,
         PHG4SimpleEventGenerator::Uniform);
@@ -104,9 +108,9 @@ int Fun4PatternDB(
     gen2->set_vertex_size_function(PHG4SimpleEventGenerator::Uniform);
     gen2->set_vertex_size_parameters(0.0, 0.0);
 
-    gen2->set_pxpypz_range(-4, -1, -1, 1, 30, 60);
+    gen2->set_pxpypz_range(1, 4, -1, 1, 30, 60);
     gen2->Verbosity(0);
-    //se->registerSubsystem(gen2);
+    se->registerSubsystem(gen2);
   }
 
   // Fun4All G4 module

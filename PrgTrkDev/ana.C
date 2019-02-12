@@ -99,10 +99,82 @@ void drawEffMul() {
 }
 
 
+void drawEffDS123Survey() {
+
+  int n = 6;
+  char* inputs [] = {
+     "st123/0.0cm/trk_eval.root"
+    ,"st123/.15cm/trk_eval.root"
+    ,"st123/0.1cm/trk_eval.root"
+    ,"st123/0.2cm/trk_eval.root"
+    ,"st123/0.5cm/trk_eval.root"
+    ,"st123/1.0cm/trk_eval.root"
+  };
+
+  float y[]       = { 0, 0, 0, 0, 0, 0};
+  float y_error[] = { 0, 0, 0, 0, 0, 0};
+  float x[]       = { 0, 0.1, 0.15, 0.2, 0.5, 1};
+  float x_error[] = { 0, 0, 0, 0, 0, 0};
+
+  for(int i=0;i<n;++i) {
+    TFile *f = TFile::Open(inputs[i],"read");
+    TH1D *h = new TH1D("h","h",2,-0.5,1.5);
+    T->Project("h","ntruhits>0","gndc>=18");
+    y[i] = h->GetMean();
+    y_error[i] = h->GetMeanError();
+  }
+
+  TCanvas *c0 = new TCanvas("drawEffDS123Survey", "drawEffDS123Survey");
+  c0->SetGridy();
+  TGraphErrors* gr = new TGraphErrors(n, x, y, x_error, y_error);
+  gr->SetTitle("; X0 shift [cm] ; Eff.");
+  gr->SetMarkerStyle(20);
+  gr->Draw("ap");
+  gr->SetMaximum(1.1);
+  gr->SetMinimum(0);
+}
+
+
+void drawEffDS23Survey() {
+
+  int n = 4;
+  char* inputs [] = {
+    "st23/0.0cm/trk_eval.root"
+    ,"st23/0.5cm/trk_eval.root"
+    ,"st23/1.0cm/trk_eval.root"
+    ,"st23/2.0cm/trk_eval.root"
+  };
+
+  float y[]       = { 0, 0, 0, 0, 0, 0};
+  float y_error[] = { 0, 0, 0, 0, 0, 0};
+  float x[]       = { 0, 0.5, 1, 2};
+  float x_error[] = { 0, 0, 0, 0, 0, 0};
+
+  for(int i=0;i<n;++i) {
+    TFile *f = TFile::Open(inputs[i],"read");
+    TH1D *h = new TH1D("h","h",2,-0.5,1.5);
+    T->Project("h","ntruhits>0","gndc>=18");
+    y[i] = h->GetMean();
+    y_error[i] = h->GetMeanError();
+  }
+
+  TCanvas *c0 = new TCanvas("drawEffDS23Survey", "drawEffDS23Survey");
+  c0->SetGridy();
+  TGraphErrors* gr = new TGraphErrors(n, x, y, x_error, y_error);
+  gr->SetTitle("; X0 shift [cm] ; Eff.");
+  gr->SetMarkerStyle(20);
+  gr->Draw("ap");
+  gr->SetMaximum(1.1);
+  gr->SetMinimum(0);
+}
+
+
 void ana() {
   gStyle->SetOptFit();
 
-  drawEffMul();
+  drawEffDS23Survey();
+  drawEffDS123Survey();
 
-  drawTimeMul();
+  //drawEffMul();
+  //drawTimeMul();
 }

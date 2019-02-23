@@ -3,12 +3,12 @@
 
 using namespace std;
 
-int Fun4PrgTrkDev(
+int Fun4TrkDev(
     const int nEvents = 1,
-    const double x0_shift = 2.0 //cm 
+  	const int nmu = 1,
+    const double x0_shift = 0.0 //cm 
     )
 {
-  const int nmu = 1;
   const double target_coil_pos_z = -300;
 
   const bool do_collimator = false;

@@ -40,6 +40,30 @@ TH1D * getEffHist(
   return h;
 }
 
+void drawTimeDSLevel() {
+
+  int n = 3;
+  float y[]       = { 43.0, 23.6, 11.6};
+  float x[]       = { 0, 2, 3};
+
+  float y_error[] = { 0, 0, 0, 0, 0, 0};
+  float x_error[] = { 0, 0, 0, 0, 0, 0};
+
+  for(int i=0;i<n;++i) {
+    y_error[i] = 0.1*y[i];
+  }
+
+  TCanvas *c0 = new TCanvas("drawTimeDSLevel", "drawTimeDSLevel");
+  TGraphErrors* gr = new TGraphErrors(n, x, y, x_error, y_error);
+  gr->SetTitle(";DS level ; Time/event [sec.]");
+  gr->SetMarkerStyle(20);
+  gr->Draw("ap");
+  //gr->SetMaximum(2);
+  //gr->GetXaxis()->SetRangeUser(-5,11);
+  //TF1 *fpol = new TF1("fpol","[0]*pow(x,[1])+[2]");
+  //gr->Fit(fpol);
+}
+
 void drawTimeMul() {
 
   int n = 6;
@@ -135,11 +159,56 @@ void drawEffDS123Survey() {
 }
 
 
+void drawEffDSLevel() {
+
+  //int n = 4;
+  //char* inputs [] = {
+  //   "res3_ds0_1X200/trk_eval.root"
+  //  ,"res3_ds1_1X200/trk_eval.root"
+  //  ,"res3_ds2_1X200/trk_eval.root"
+  //  ,"res3_ds3_1X200/trk_eval.root"
+  //};
+  //float x[]       = { 0, 1, 2, 3};
+
+  int n = 3;
+  char* inputs [] = {
+     "res3_ds0_20X5/trk_eval.root"
+    ,"res3_ds2_20X5/trk_eval.root"
+    ,"res3_ds3_20X5/trk_eval.root"
+  };
+  float x[]       = { 0, 2, 3};
+
+  float x_error[] = { 0, 0, 0, 0, 0, 0};
+  float y[]       = { 0, 0, 0, 0, 0, 0};
+  float y_error[] = { 0, 0, 0, 0, 0, 0};
+
+	float ref_mean = 1.0;
+
+  for(int i=0;i<n;++i) {
+    TFile *f = TFile::Open(inputs[i],"read");
+    TH1D *h = new TH1D("h","h",2,-0.5,1.5);
+    T->Project("h","ntruhits>0","gndc>=18");
+		if(i==0) ref_mean = h->GetMean();
+    y[i] = h->GetMean()/ref_mean;
+    y_error[i] = h->GetMeanError()/ref_mean;
+  }
+
+  TCanvas *c0 = new TCanvas("drawEffDSLevel", "drawEffDSLevel");
+  c0->SetGridy();
+  TGraphErrors* gr = new TGraphErrors(n, x, y, x_error, y_error);
+  gr->SetTitle("; DS level; Eff.");
+  gr->SetMarkerStyle(20);
+  gr->Draw("ap");
+  gr->SetMaximum(1.1);
+  gr->SetMinimum(0);
+}
+
+
 void drawEffDS23Survey() {
 
   int n = 4;
   char* inputs [] = {
-    "st23/0.0cm/trk_eval.root"
+     "st23/0.0cm/trk_eval.root"
     ,"st23/0.5cm/trk_eval.root"
     ,"st23/1.0cm/trk_eval.root"
     ,"st23/2.0cm/trk_eval.root"
@@ -172,8 +241,11 @@ void drawEffDS23Survey() {
 void ana() {
   gStyle->SetOptFit();
 
-  drawEffDS23Survey();
-  drawEffDS123Survey();
+	drawEffDSLevel();
+	drawTimeDSLevel();
+
+  //drawEffDS23Survey();
+  //drawEffDS123Survey();
 
   //drawEffMul();
   //drawTimeMul();

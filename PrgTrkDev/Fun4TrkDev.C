@@ -101,6 +101,7 @@ int Fun4TrkDev(
 
   if(gen_particle) {
     PHG4SimpleEventGenerator *gen = new PHG4SimpleEventGenerator("MUP");
+		//gen->set_seed(123);
     gen->add_particles("mu+", nmu);  // mu+,e+,proton,pi+,Upsilon
     gen->set_vertex_distribution_function(PHG4SimpleEventGenerator::Uniform,
         PHG4SimpleEventGenerator::Uniform,
@@ -138,7 +139,7 @@ int Fun4TrkDev(
 
   // Fun4All G4 module
   PHG4Reco *g4Reco = new PHG4Reco();
-  //g4Reco->G4Seed(123);
+  //PHG4Reco::G4Seed(123);
   //g4Reco->set_field(5.);
   g4Reco->set_field_map(
       jobopt_svc->m_fMagFile+" "+
@@ -173,6 +174,34 @@ int Fun4TrkDev(
   DPDigitizer *digitizer = new DPDigitizer("DPDigitizer", 0);
   //digitizer->Verbosity(10);
   se->registerSubsystem(digitizer);
+
+	gSystem->Load("libembedding.so");
+	RndmEmbed *embed = new RndmEmbed("RndmEmbed");
+
+	double noise_rate_1 = 0.25;
+	double noise_rate_2 = 0.15;
+	double noise_rate_3 = 0.12;
+
+	//double noise_rate_1 = 0.20;
+	//double noise_rate_2 = 0.12;
+	//double noise_rate_3 = 0.08;
+
+	embed->set_noise_rate("D1X",   noise_rate_1);
+	embed->set_noise_rate("D1U",   noise_rate_1);
+	embed->set_noise_rate("D1V",   noise_rate_1);
+	embed->set_noise_rate("D2Xp",  noise_rate_2);
+	embed->set_noise_rate("D2U",   noise_rate_2);
+	embed->set_noise_rate("D2V",   noise_rate_2);
+	embed->set_noise_rate("D3pXp", noise_rate_3);
+	embed->set_noise_rate("D3pUp", noise_rate_3);
+	embed->set_noise_rate("D3pVp", noise_rate_3);
+	embed->set_noise_rate("D3mXp", noise_rate_3);
+	embed->set_noise_rate("D3mUp", noise_rate_3);
+	embed->set_noise_rate("D3mVp", noise_rate_3);
+
+	embed->print_noise_rate();
+
+	se->registerSubsystem(embed);
 
   gSystem->Load("libktracker.so");
   KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();

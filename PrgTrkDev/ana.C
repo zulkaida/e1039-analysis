@@ -88,6 +88,50 @@ void drawTimeMul() {
   gr->Fit(fpol);
 }
 
+void drawTimeAna(const char* name) {
+
+  //int n = 2;
+  //char* inputs [] = {
+  //  "nrm_4_res222_ds0_100/ktracker_ana.root",
+  //  "nrm_4_res222_ds2_100/ktracker_ana.root",
+  //};
+  //float x[]       = { 0, 2};
+
+  int n = 3;
+  char* inputs [] = {
+    "nrh_4_res222_ds0_100/ktracker_ana.root",
+    "nrh_4_res222_ds2_100/ktracker_ana.root",
+    "nrh_4_res222_ds3_100/ktracker_ana.root"
+  };
+  float x[]       = { 0, 2, 3};
+
+  float y[]       = { 0, 0, 0, 0, 0, 0};
+  float y_error[] = { 0, 0, 0, 0, 0, 0};
+  float x_error[] = { 0, 0, 0, 0, 0, 0};
+
+  for(int i=0;i<n;++i) {
+    TFile *f = TFile::Open(inputs[i],"read");
+    TH1D *h = new TH1D("h","h",50,-0.5,49.5);
+    TNtuple *T = (TNtuple*) f->Get(name);
+    T->Project("h","time","");
+    y[i] = h->GetMean();
+    y_error[i] = h->GetMeanError();
+  }
+
+  TCanvas *c0 = new TCanvas(name, name);
+  c0->SetGridy();
+  //c0->SetLogy();
+  TGraphErrors* gr = new TGraphErrors(n, x, y, x_error, y_error);
+  gr->SetTitle(";DS Level ; Time/event [sec.]");
+  gr->SetMarkerStyle(20);
+  gr->Draw("ap,text");
+  gr->SetMaximum(12);
+  gr->SetMinimum(0);
+  gr->GetXaxis()->SetRangeUser(-1,4);
+  gr->Print();
+}
+
+
 void drawEffMul() {
 
   int n = 6;
@@ -161,20 +205,18 @@ void drawEffDS123Survey() {
 
 void drawEffDSLevel() {
 
-  //int n = 4;
+  //int n = 2;
   //char* inputs [] = {
-  //   "res3_ds0_1X200/trk_eval.root"
-  //  ,"res3_ds1_1X200/trk_eval.root"
-  //  ,"res3_ds2_1X200/trk_eval.root"
-  //  ,"res3_ds3_1X200/trk_eval.root"
+  //   "nrm_4_res222_ds0_100/trk_eval.root"
+  //  ,"nrm_4_res222_ds2_100/trk_eval.root"
   //};
-  //float x[]       = { 0, 1, 2, 3};
+  //float x[]       = { 0, 2};
 
   int n = 3;
   char* inputs [] = {
-     "res3_ds0_20X5/trk_eval.root"
-    ,"res3_ds2_20X5/trk_eval.root"
-    ,"res3_ds3_20X5/trk_eval.root"
+     "nrh_4_res222_ds0_100/trk_eval.root"
+    ,"nrh_4_res222_ds2_100/trk_eval.root"
+    ,"nrh_4_res222_ds3_100/trk_eval.root"
   };
   float x[]       = { 0, 2, 3};
 
@@ -188,7 +230,7 @@ void drawEffDSLevel() {
     TFile *f = TFile::Open(inputs[i],"read");
     TH1D *h = new TH1D("h","h",2,-0.5,1.5);
     T->Project("h","ntruhits>0","gndc>=18");
-		if(i==0) ref_mean = h->GetMean();
+		//if(i==0) ref_mean = h->GetMean();
     y[i] = h->GetMean()/ref_mean;
     y_error[i] = h->GetMeanError()/ref_mean;
   }
@@ -201,6 +243,8 @@ void drawEffDSLevel() {
   gr->Draw("ap");
   gr->SetMaximum(1.1);
   gr->SetMinimum(0);
+  gr->GetXaxis()->SetRangeUser(-1,4);
+  gr->Print();
 }
 
 
@@ -241,8 +285,11 @@ void drawEffDS23Survey() {
 void ana() {
   gStyle->SetOptFit();
 
+  drawTimeAna("St23");
+  drawTimeAna("St123");
+
 	drawEffDSLevel();
-	drawTimeDSLevel();
+	//drawTimeDSLevel();
 
   //drawEffDS23Survey();
   //drawEffDS123Survey();

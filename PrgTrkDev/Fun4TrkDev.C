@@ -178,13 +178,15 @@ int Fun4TrkDev(
 	gSystem->Load("libembedding.so");
 	RndmEmbed *embed = new RndmEmbed("RndmEmbed");
 
-	double noise_rate_1 = 0.25;
-	double noise_rate_2 = 0.15;
-	double noise_rate_3 = 0.12;
+  //high
+	//double noise_rate_1 = 0.25;
+	//double noise_rate_2 = 0.15;
+	//double noise_rate_3 = 0.12;
 
-	//double noise_rate_1 = 0.20;
-	//double noise_rate_2 = 0.12;
-	//double noise_rate_3 = 0.08;
+  //medium
+	double noise_rate_1 = 0.12;
+	double noise_rate_2 = 0.10;
+	double noise_rate_3 = 0.08;
 
 	embed->set_noise_rate("D1X",   noise_rate_1);
 	embed->set_noise_rate("D1U",   noise_rate_1);
@@ -206,7 +208,7 @@ int Fun4TrkDev(
   gSystem->Load("libktracker.so");
   KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();
   ktracker->Verbosity(10);
-  ktracker->set_DS_level(2);
+  ktracker->set_DS_level(0);
   se->registerSubsystem(ktracker);
 
   gSystem->Load("libmodule_example.so");

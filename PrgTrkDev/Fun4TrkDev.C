@@ -176,96 +176,107 @@ int Fun4TrkDev(
   se->registerSubsystem(digitizer);
 
 	gSystem->Load("libembedding.so");
-	RndmEmbed *embed = new RndmEmbed("RndmEmbed");
+	int embedding_opt = 1;
 
-  //high
-	//double noise_rate_1 = 0.25;
-	//double noise_rate_2 = 0.15;
-	//double noise_rate_3 = 0.12;
+	if(embedding_opt == 1) {
+		SRawEventEmbed *embed = new SRawEventEmbed("SRawEventEmbed");
+		embed->set_in_name("digit_016070_R007.root");
+		embed->set_trigger_bit((1<<0));
+		embed->Verbosity(100);
+		se->registerSubsystem(embed);
+	} else (embedding_opt == 2) {
+		RndmEmbed *embed = new RndmEmbed("RndmEmbed");
 
-  //medium
-	double noise_rate_1 = 0.12;
-	double noise_rate_2 = 0.10;
-	double noise_rate_3 = 0.08;
+		//high
+		//double noise_rate_1 = 0.25;
+		//double noise_rate_2 = 0.15;
+		//double noise_rate_3 = 0.12;
 
-	embed->set_noise_rate("D1X",   noise_rate_1);
-	embed->set_noise_rate("D1U",   noise_rate_1);
-	embed->set_noise_rate("D1V",   noise_rate_1);
-	embed->set_noise_rate("D2Xp",  noise_rate_2);
-	embed->set_noise_rate("D2U",   noise_rate_2);
-	embed->set_noise_rate("D2V",   noise_rate_2);
-	embed->set_noise_rate("D3pXp", noise_rate_3);
-	embed->set_noise_rate("D3pUp", noise_rate_3);
-	embed->set_noise_rate("D3pVp", noise_rate_3);
-	embed->set_noise_rate("D3mXp", noise_rate_3);
-	embed->set_noise_rate("D3mUp", noise_rate_3);
-	embed->set_noise_rate("D3mVp", noise_rate_3);
+		//medium
+		double noise_rate_1 = 0.12;
+		double noise_rate_2 = 0.10;
+		double noise_rate_3 = 0.08;
 
-	embed->print_noise_rate();
+		embed->set_noise_rate("D1X",   noise_rate_1);
+		embed->set_noise_rate("D1U",   noise_rate_1);
+		embed->set_noise_rate("D1V",   noise_rate_1);
+		embed->set_noise_rate("D2Xp",  noise_rate_2);
+		embed->set_noise_rate("D2U",   noise_rate_2);
+		embed->set_noise_rate("D2V",   noise_rate_2);
+		embed->set_noise_rate("D3pXp", noise_rate_3);
+		embed->set_noise_rate("D3pUp", noise_rate_3);
+		embed->set_noise_rate("D3pVp", noise_rate_3);
+		embed->set_noise_rate("D3mXp", noise_rate_3);
+		embed->set_noise_rate("D3mUp", noise_rate_3);
+		embed->set_noise_rate("D3mVp", noise_rate_3);
 
-	se->registerSubsystem(embed);
+		embed->print_noise_rate();
 
-  gSystem->Load("libktracker.so");
-  KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();
-  ktracker->Verbosity(10);
-  ktracker->set_DS_level(0);
-  se->registerSubsystem(ktracker);
+		se->registerSubsystem(embed);
+	}
 
-  gSystem->Load("libmodule_example.so");
-  TrkEval *trk_eval = new TrkEval();
-  trk_eval->Verbosity(0);
-  trk_eval->set_hit_container_choice("Vector");
-  trk_eval->set_out_name("trk_eval.root");
-  se->registerSubsystem(trk_eval);
 
-  ///////////////////////////////////////////
-  // Output
-  ///////////////////////////////////////////
+	gSystem->Load("libktracker.so");
+	KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();
+	ktracker->Verbosity(10);
+	ktracker->set_DS_level(2);
+	se->registerSubsystem(ktracker);
 
-  // save a comprehensive  evaluation file
-  PHG4DSTReader *ana = new PHG4DSTReader(
-      string("DSTReader.root"));
-  ana->set_save_particle(true);
-  ana->set_load_all_particle(false);
-  ana->set_load_active_particle(true);
-  ana->set_save_vertex(true);
-  //ana->AddNode("Coil");
-  //ana->AddNode("Target");
-  //ana->AddNode("Collimator");
-  ana->AddNode("C1X");
-  ana->AddNode("C2X");
-  se->registerSubsystem(ana);
+	gSystem->Load("libmodule_example.so");
+	TrkEval *trk_eval = new TrkEval();
+	trk_eval->Verbosity(0);
+	trk_eval->set_hit_container_choice("Vector");
+	trk_eval->set_out_name("trk_eval.root");
+	se->registerSubsystem(trk_eval);
 
-  // input - we need a dummy to drive the event loop
-  Fun4AllInputManager *in = new Fun4AllDummyInputManager("JADE");
-  se->registerInputManager(in);
+	///////////////////////////////////////////
+	// Output
+	///////////////////////////////////////////
 
-  //Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", "DST.root");
-  //se->registerOutputManager(out);
+	// save a comprehensive  evaluation file
+	PHG4DSTReader *ana = new PHG4DSTReader(
+			string("DSTReader.root"));
+	ana->set_save_particle(true);
+	ana->set_load_all_particle(false);
+	ana->set_load_active_particle(true);
+	ana->set_save_vertex(true);
+	//ana->AddNode("Coil");
+	//ana->AddNode("Target");
+	//ana->AddNode("Collimator");
+	ana->AddNode("C1X");
+	ana->AddNode("C2X");
+	se->registerSubsystem(ana);
 
-  // a quick evaluator to inspect on hit/particle/tower level
+	// input - we need a dummy to drive the event loop
+	Fun4AllInputManager *in = new Fun4AllDummyInputManager("JADE");
+	se->registerInputManager(in);
 
-  if (nEvents > 0)
-  {
-    se->run(nEvents);
+	//Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", "DST.root");
+	//se->registerOutputManager(out);
 
-    //PHGeomUtility::ExportGeomtry(se->topNode(),"geom.root");
+	// a quick evaluator to inspect on hit/particle/tower level
 
-    // finish job - close and save output files
-    se->End();
-    se->PrintTimer();
-    std::cout << "All done" << std::endl;
+	if (nEvents > 0)
+	{
+		se->run(nEvents);
 
-    // cleanup - delete the server and exit
-    delete se;
-    gSystem->Exit(0);
-  }
-  return;
+		//PHGeomUtility::ExportGeomtry(se->topNode(),"geom.root");
+
+		// finish job - close and save output files
+		se->End();
+		se->PrintTimer();
+		std::cout << "All done" << std::endl;
+
+		// cleanup - delete the server and exit
+		delete se;
+		gSystem->Exit(0);
+	}
+	return;
 }
 
 PHG4ParticleGun *get_gun(const char *name = "PGUN")
 {
-  Fun4AllServer *se = Fun4AllServer::instance();
-  PHG4ParticleGun *pgun = (PHG4ParticleGun *) se->getSubsysReco(name);
-  return pgun;
+	Fun4AllServer *se = Fun4AllServer::instance();
+	PHG4ParticleGun *pgun = (PHG4ParticleGun *) se->getSubsysReco(name);
+	return pgun;
 }

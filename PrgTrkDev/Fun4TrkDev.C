@@ -180,11 +180,15 @@ int Fun4TrkDev(
 
 	if(embedding_opt == 1) {
 		SRawEventEmbed *embed = new SRawEventEmbed("SRawEventEmbed");
-		embed->set_in_name("digit_016070_R007.root");
-		embed->set_trigger_bit((1<<0));
+		//embed->set_in_name("digit_016070_R007.root");
+		//embed->set_in_tree_name("save");
+		//embed->set_trigger_bit((1<<0));
+		embed->set_in_name("random_run3a_1.root");
+		embed->set_in_tree_name("mb");
+		embed->set_trigger_bit((1<<7));
 		embed->Verbosity(100);
 		se->registerSubsystem(embed);
-	} else (embedding_opt == 2) {
+	} else if(embedding_opt == 2) {
 		RndmEmbed *embed = new RndmEmbed("RndmEmbed");
 
 		//high
@@ -251,8 +255,8 @@ int Fun4TrkDev(
 	Fun4AllInputManager *in = new Fun4AllDummyInputManager("JADE");
 	se->registerInputManager(in);
 
-	//Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", "DST.root");
-	//se->registerOutputManager(out);
+	Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", "DST.root");
+	se->registerOutputManager(out);
 
 	// a quick evaluator to inspect on hit/particle/tower level
 

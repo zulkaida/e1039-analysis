@@ -10,6 +10,7 @@ int Fun4TrkDev(
     )
 {
   const double target_coil_pos_z = -300;
+	int embedding_opt = 1;
 
   const bool do_collimator = false;
   const bool do_target = false;
@@ -113,8 +114,10 @@ int Fun4TrkDev(
 
     //gen->set_phi_range(-1.0 * TMath::Pi(), 1.0 * TMath::Pi());
     //gen->set_eta_range(2, 4);
-    gen->set_pxpypz_range(1, 4, -1, 1, 30, 60);
-    //gen->set_pxpypz_range(2,2, 0.2,0.2, 40,40);
+
+    //gen->set_pxpypz_range(1,4, -1,1, 30,60);
+    gen->set_pxpypz_range(0,6, -6,6, 10,100);
+
     gen->Verbosity(0);
     se->registerSubsystem(gen);
   }
@@ -153,7 +156,7 @@ int Fun4TrkDev(
   // shape of our world - it is a tube
   g4Reco->SetWorldShape("G4BOX");
   // this is what our world is filled with
-  g4Reco->SetWorldMaterial("G4_Galactic");
+  g4Reco->SetWorldMaterial("G4_AIR"); //G4_Galactic, G4_AIR
   // Geant4 Physics list to use
   g4Reco->SetPhysicsList("FTFP_BERT");
 
@@ -176,16 +179,15 @@ int Fun4TrkDev(
   se->registerSubsystem(digitizer);
 
 	gSystem->Load("libembedding.so");
-	int embedding_opt = 1;
 
 	if(embedding_opt == 1) {
 		SRawEventEmbed *embed = new SRawEventEmbed("SRawEventEmbed");
-		//embed->set_in_name("digit_016070_R007.root");
-		//embed->set_in_tree_name("save");
-		//embed->set_trigger_bit((1<<0));
-		embed->set_in_name("random_run3a_1.root");
-		embed->set_in_tree_name("mb");
-		embed->set_trigger_bit((1<<7));
+		embed->set_in_name("digit_016070_R007.root");
+		embed->set_in_tree_name("save");
+		embed->set_trigger_bit((1<<0));
+		//embed->set_in_name("random_run3a_1.root");
+		//embed->set_in_tree_name("mb");
+		//embed->set_trigger_bit((1<<7));
 		embed->Verbosity(100);
 		se->registerSubsystem(embed);
 	} else if(embedding_opt == 2) {
@@ -264,7 +266,7 @@ int Fun4TrkDev(
 	{
 		se->run(nEvents);
 
-		//PHGeomUtility::ExportGeomtry(se->topNode(),"geom.root");
+		PHGeomUtility::ExportGeomtry(se->topNode(),"geom.root");
 
 		// finish job - close and save output files
 		se->End();

@@ -49,11 +49,12 @@ void get_phys_param(
 void get_logi_param(
     TSQLServer *server,
     const int lvID,
-    int &sID
+    int &sID,
+    int &mID
     ){
   char query[2000];
   sprintf(query,
-      "SELECT sID" 
+      "SELECT sID, mID" 
       " FROM LogicalVolumes WHERE lvID = %i",
       lvID
       );
@@ -65,6 +66,7 @@ void get_logi_param(
   }
   TSQLRow *row = res->Next();
   sID = atoi((*row)[0]);
+  mID = atoi((*row)[1]);
   return;
 }
 
@@ -152,6 +154,7 @@ void SetupSensitiveDetectors(
     double place[3];
     double rot[3];
     int lvID;
+    int mID;
     int sID;
 
     //LogDebug("");
@@ -163,7 +166,7 @@ void SetupSensitiveDetectors(
     //<< endl;
 
     //LogDebug("");
-    get_logi_param(server, lvID, sID);
+    get_logi_param(server, lvID, sID, mID);
 
     //LogDebug("");
     get_soli_param(server, sID, size);
@@ -180,7 +183,11 @@ void SetupSensitiveDetectors(
     box->set_double_param("place_x", place[0]);
     box->set_double_param("place_y", place[1]);
     box->set_double_param("place_z", place[2]);
-    box->set_string_param("material", "G4_Si");// G4_Si, G4_AIR
+    box->set_string_param("material", "G4_AIR");// G4_Si, G4_AIR
+		if(mID == 1) box->set_string_param("material", "G4_AIR");
+		if(mID == 7) box->set_string_param("material", "G4_PLASTIC_SC_VINYLTOLUENE");
+		if(mID == 9) box->set_string_param("material", "G4_Ar");
+		if(mID ==13) box->set_string_param("material", "G4_Ar");
     box->SetActive(1);
     g4Reco->registerSubsystem(box);
   }

@@ -17,8 +17,8 @@ int Fun4PatternDB(
 
   const bool gen_gun = false;
   const bool gen_pythia8 = false;
-  const bool gen_particle = false;
-  const bool gen_scan = true;
+  const bool gen_particle = true;
+  const bool gen_scan = false;
 
   gSystem->Load("libfun4all");
   gSystem->Load("libg4detectors");
@@ -88,10 +88,11 @@ int Fun4PatternDB(
     gen->set_vertex_size_parameters(0.0, 0.0);
 
     //gen->set_pxpypz_range(1, 4, -1, 1, 30, 60);
-    gen->set_pxpypz_range(1, 4, -1, 1, 50, 51);
-		gen->set_px_step(0.6);
-		gen->set_py_step(1);
-		gen->set_pz_step(1);
+    //gen->set_pxpypz_range(1, 4, -1, 1, 50, 51);
+    gen->set_pxpypz_range(1, 1.6, 0.7, 1, 50, 51);
+		gen->set_px_step(0.3);
+		gen->set_py_step(0.3);
+		gen->set_pz_step(3);
 
     gen->Verbosity(0);
     se->registerSubsystem(gen);
@@ -108,7 +109,15 @@ int Fun4PatternDB(
     gen2->set_vertex_size_function(PHG4SimpleEventGenerator::Uniform);
     gen2->set_vertex_size_parameters(0.0, 0.0);
 
-    gen2->set_pxpypz_range(1, 4, -1, 1, 30, 60);
+    gen2->set_pxpypz_range(0,6, -6,6, 10,100);
+    //gen2->set_pxpypz_range(1,4, -1,1, 30,60);
+
+    //gen2->set_vertex_distribution_mean(10.4, 19.8, 614);
+    //gen2->set_pxpypz_range(-1.28,-1.28, 0.79,0.79, 27.1,27.1);
+
+    //gen2->set_vertex_distribution_mean(23.1, 8.5, 614);
+    //gen2->set_pxpypz_range(-0.68,-0.68, 0.36,0.36, 28.4,28.4);
+
     gen2->Verbosity(0);
     se->registerSubsystem(gen2);
   }
@@ -129,7 +138,7 @@ int Fun4PatternDB(
   // shape of our world - it is a tube
   g4Reco->SetWorldShape("G4BOX");
   // this is what our world is filled with
-  g4Reco->SetWorldMaterial("G4_Galactic");
+  g4Reco->SetWorldMaterial("G4_AIR"); //G4_Galactic, G4_AIR
   // Geant4 Physics list to use
   g4Reco->SetPhysicsList("FTFP_BERT");
 
@@ -153,14 +162,14 @@ int Fun4PatternDB(
   gSystem->Load("libktracker.so");
   KalmanFastTrackingWrapper *ktracker = new KalmanFastTrackingWrapper();
   //ktracker->Verbosity(10);
-  //ktracker->set_enable_DS(true);
+  //ktracker->set_DS_level(0);
   se->registerSubsystem(ktracker);
 
   gSystem->Load("libmodule_example.so");
   TrkEval *trk_eval = new TrkEval();
   trk_eval->Verbosity(0);
   trk_eval->set_hit_container_choice("Vector");
-  trk_eval->set_out_name("trk_eval.root");
+  trk_eval->set_out_name("pattern_db_tmp.root");
   se->registerSubsystem(trk_eval);
 
   ///////////////////////////////////////////
@@ -168,18 +177,18 @@ int Fun4PatternDB(
   ///////////////////////////////////////////
 
   // save a comprehensive  evaluation file
-  PHG4DSTReader *ana = new PHG4DSTReader(
+  PHG4DSTReader *reader = new PHG4DSTReader(
       string("DSTReader.root"));
-  ana->set_save_particle(true);
-  ana->set_load_all_particle(false);
-  ana->set_load_active_particle(true);
-  ana->set_save_vertex(true);
-  //ana->AddNode("Coil");
-  //ana->AddNode("Target");
-  //ana->AddNode("Collimator");
-  ana->AddNode("C1X");
-  ana->AddNode("C2X");
-  se->registerSubsystem(ana);
+  reader->set_save_particle(true);
+  reader->set_load_all_particle(false);
+  reader->set_load_active_particle(true);
+  reader->set_save_vertex(true);
+  //reader->AddNode("Coil");
+  //reader->AddNode("Target");
+  //reader->AddNode("Collimator");
+  reader->AddNode("C1X");
+  reader->AddNode("C2X");
+  se->registerSubsystem(reader);
 
   // input - we need a dummy to drive the event loop
   Fun4AllInputManager *in = new Fun4AllDummyInputManager("JADE");
